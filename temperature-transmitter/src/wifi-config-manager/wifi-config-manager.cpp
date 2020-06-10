@@ -7,25 +7,25 @@ struct Config {
     char password[20];
 } config;
 
-ConfigManager configManager;
 
-void wifiConfigInit() {
-    configManager.setAPName("esp");
-    configManager.setAPPassword("12345678");
-    configManager.setAPFilename("/index.html");
 
-    configManager.setAPCallback(createCustomScanRoute);
+void WifiConfigManager::init() {
+    this->configManager.setAPName("esp");
+    this->configManager.setAPPassword("12345678");
+    this->configManager.setAPFilename("/index.html");
 
-    configManager.begin(config);
+    this->configManager.setAPCallback(createCustomScanRoute);
+
+    this->configManager.begin(config);
 }
 
-void wifiConfigLoop() {
-    configManager.loop();
+void WifiConfigManager::loop() {
+    this->configManager.loop();
 }
 
-void wifiConfigClear() {
+void WifiConfigManager::clear() {
     Serial.println("Resetting WiFi settings");
-    configManager.clearWifiSettings(true);
+    this->configManager.clearWifiSettings(true);
 }
 
 void createCustomScanRoute(WebServer *server) {

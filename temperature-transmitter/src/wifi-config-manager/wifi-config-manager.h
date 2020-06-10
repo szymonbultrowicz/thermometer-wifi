@@ -10,4 +10,14 @@ void wifiConfigClear();
 
 void createCustomScanRoute(WebServer *server);
 
+class WifiConfigManager {
+    public:
+        void init();
+        void loop();
+        void clear();
+    
+    private:
+        ConfigManager configManager;
+};
+
 #endif

@@ -1,11 +1,12 @@
 #include "ReadingSender.h"
 
-WiFiClient wifiClient;
+BearSSL::WiFiClientSecure wifiClient;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
 void ReadingSender::init() {
     timeClient.begin();
+    wifiClient.setInsecure();
 }
 
 void ReadingSender::send(Reading* reading) {
@@ -34,10 +35,10 @@ void ReadingSender::updateTime() {
 }
 
 String ReadingSender::serializeReading(Reading* reading) {
-    String temperature = "{\"temperature\":" + String(reading->temperature) + "},";
-    String humidity = "{\"humidity\":" + String(reading->humidity) + "},";
-    String battery = "{\"battery\":" + String(reading->battery) + "},";
-    String timestamp = "{\"timestamp\":" + String(timeClient.getEpochTime()) + "}";
+    String temperature = "\"temperature\":" + String(reading->temperature) + ",";
+    String humidity = "\"humidity\":" + String(reading->humidity) + ",";
+    String battery = "\"battery\":" + String(reading->battery) + ",";
+    String timestamp = "\"timestamp\":" + String(timeClient.getEpochTime());
     Serial.println(temperature);
     Serial.println(humidity);
     Serial.println(battery);

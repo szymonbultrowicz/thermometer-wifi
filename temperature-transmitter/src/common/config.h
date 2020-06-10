@@ -4,8 +4,8 @@
 #include "Arduino.h"
 #include "config-prv.h"
 
-#define PIN_RESET D8
-#define PIN_DHT D7
+#define PIN_RESET 16 // D0
+#define PIN_DHT 0  // D3
 
 #define RESET_DELAY 3*1000
 #define LOOP_DELAY 10*1000

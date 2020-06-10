@@ -10,11 +10,12 @@
 unsigned long resetPressed = 0;
 
 ReadingSender readingSender;
-
+WifiConfigManager wifiConfigManager;
 
 void setup() {
     Serial.begin(115200);
     Serial.println("Started");
+    DEBUG_MODE = true;
 
     pinMode(PIN_RESET, INPUT);
     pinMode(PIN_DHT, INPUT);
@@ -26,11 +27,13 @@ void setup() {
         Serial.println("An Error has occurred while mounting SPIFFS");
     }
 
-    wifiConfigInit();
+    wifiConfigManager.init();
+
+    delay(1000);
 }
 
 void loop() {
-    wifiConfigLoop();
+    wifiConfigManager.loop();
     resetLoop();
 
     if (WiFi.status() == WL_CONNECTED) {
@@ -53,7 +56,7 @@ void resetLoop() {
         if (resetPressed == 0) {
             resetPressed = currentTime;
         } else if (currentTime - resetPressed > RESET_DELAY) {
-            wifiConfigClear();
+            wifiConfigManager.clear();
         }
     } else {
         resetPressed = 0;
