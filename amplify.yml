@@ -1,0 +1,18 @@
+version: 0.1
+applications:
+  - appRoot: thermometer-webui
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - yarn
+        build:
+          commands:
+            - yarn build
+      artifacts:
+        baseDirectory: dist/thermometer-webui
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
