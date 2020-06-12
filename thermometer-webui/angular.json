@@ -52,7 +52,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -135,6 +135,12 @@
           }
         }
       }
-    }},
-  "defaultProject": "thermometer-webui"
+    }
+  },
+  "defaultProject": "thermometer-webui",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
