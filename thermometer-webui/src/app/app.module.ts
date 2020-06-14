@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AppComponent } from './app.component';
@@ -39,6 +40,7 @@ const routes: Routes = [{
     BrowserModule,
     CommonModule,
     RouterModule.forRoot(routes),
+    BrowserAnimationsModule,
     MatToolbarModule,
     MatButtonModule,
     HttpClientModule,

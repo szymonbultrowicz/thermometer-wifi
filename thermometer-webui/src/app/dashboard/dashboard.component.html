@@ -5,7 +5,13 @@
     <p>Ostatni odczyt: {{ lastValue.timestamp | date : 'medium' }}</p>
 </div>
 <div>
-    <ngx-charts-line-chart
-        
-    ></ngx-charts-line-chart>
+    <ng-container *ngIf="(series$ | async) as series">
+        <ngx-charts-line-chart
+            [results]="series"
+            [legend]="true"
+            [showRefLabels]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+        ></ngx-charts-line-chart>
+    </ng-container>
 </div>

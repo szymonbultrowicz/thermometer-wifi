@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Reading } from '../data';
 import { DataService } from './../data/data.service';
+import { Series } from '@swimlane/ngx-charts';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -11,7 +12,7 @@ import { DataService } from './../data/data.service';
 export class DashboardComponent implements OnInit {
 
   lastValue$: Observable<Reading>;
-  historicalData$: Observable<Reading[]>;
+  series$: Observable<Series[]>
 
   constructor(
     private readonly dataService: DataService,
@@ -21,9 +22,7 @@ export class DashboardComponent implements OnInit {
     this.lastValue$ = this.dataService.lastValue$.pipe(
       map(data => data.result),
     );
-    this.historicalData$ = this.dataService.historicalData$.pipe(
-      map(data => data.result),
-    );
+    this.series$ = this.dataService.series$;
   }
 
 }
