@@ -1,0 +1,11 @@
+{
+  "name": "thermometer-ingestion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Szymon Bultrowicz",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.3.0"
+  }
+}
