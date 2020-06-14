@@ -1,1 +1,11 @@
-<p>dashboard works!</p>
+<div *ngIf="(lastValue$ | async) as lastValue">
+    <p>Temperatura: {{ lastValue.temperature/10 | number : '1.0-1' }}</p>
+    <p>Wilgotność: {{ lastValue.humidity/10 | number : '1.0-1' }}</p>
+    <p>Poziom baterii: {{ lastValue.battery}} </p>
+    <p>Ostatni odczyt: {{ lastValue.timestamp | date : 'medium' }}</p>
+</div>
+<div>
+    <ngx-charts-line-chart
+        
+    ></ngx-charts-line-chart>
+</div>
