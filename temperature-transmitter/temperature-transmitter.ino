@@ -1,5 +1,6 @@
 #include <WiFiClientSecure.h> 
 #include <ESP8266WiFi.h>
+#include <Ticker.h>
 #include "DHT.h"
 #include "src/common/config.h"
 #include "src/common/reading.h"
@@ -12,13 +13,17 @@ unsigned long resetPressed = 0;
 ReadingSender readingSender;
 WifiConfigManager wifiConfigManager;
 
+Ticker resetTimer;
+
 void setup() {
     Serial.begin(115200);
     Serial.println("Started");
     DEBUG_MODE = true;
 
-    pinMode(PIN_RESET, INPUT);
+    pinMode(PIN_RESET, INPUT_PULLUP);
     pinMode(PIN_DHT, INPUT);
+
+    attachInterrupt(digitalPinToInterrupt(PIN_RESET), resetChangeInterrupt, CHANGE);
 
     sensorInit();
     readingSender.init();
@@ -34,7 +39,6 @@ void setup() {
 
 void loop() {
     wifiConfigManager.loop();
-    resetLoop();
 
     if (WiFi.status() == WL_CONNECTED) {
         Reading* reading = sensorRead();
@@ -49,16 +53,19 @@ void loop() {
     }
 }
 
-void resetLoop() {
-    if (digitalRead(PIN_RESET) == HIGH) {
-        Serial.println("resetPressed");
-        unsigned long currentTime = millis();
-        if (resetPressed == 0) {
-            resetPressed = currentTime;
-        } else if (currentTime - resetPressed > RESET_DELAY) {
-            wifiConfigManager.clear();
-        }
+ICACHE_RAM_ATTR void resetChangeInterrupt() {
+    bool pressed = digitalRead(PIN_RESET) == LOW;
+    if (pressed) {
+        Serial.println("Reset pressed");
+        resetTimer.attach(5, resetInterrupt);
     } else {
-        resetPressed = 0;
+        Serial.println("Reset cancelled");
+        resetTimer.detach();
     }
+}
+
+void resetInterrupt() {
+    Serial.println("Performing factory reset");
+    wifiConfigManager.clear();
+    resetTimer.detach();
 }

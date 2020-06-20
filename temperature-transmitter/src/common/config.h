@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "config-prv.h"
 
-#define PIN_RESET 16 // D0
+#define PIN_RESET 14 // D5
 #define PIN_DHT 0  // D3
 
 #define RESET_DELAY 3*1000
