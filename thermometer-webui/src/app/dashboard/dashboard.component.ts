@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Reading } from '../data';
 import { DataService } from './../data/data.service';
 import { Series } from '@swimlane/ngx-charts';
@@ -64,5 +64,4 @@ export class DashboardComponent implements OnInit {
   private minValue(series: Series): number {
     return Math.floor(minBy(series.series, 'value')?.value as (number | undefined) ?? 0);
   }
-
 }

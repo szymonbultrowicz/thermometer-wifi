@@ -1,8 +1,8 @@
 <div class="metrics">
     <div *ngIf="(lastValue$ | async) as lastValue">
-        <p>Temperatura: {{ lastValue.temperature | number : '1.0-1' }}</p>
-        <p>Wilgotność: {{ lastValue.humidity | number : '1.0-1' }}</p>
-        <p>Poziom baterii: {{ lastValue.battery}} </p>
+        <p>Temperatura: {{ lastValue.temperature | number : '1.0-1' }}°C</p>
+        <p>Wilgotność: {{ lastValue.humidity | number : '1.0-1' }}%</p>
+        <p>Poziom baterii: {{ lastValue.battery}}V </p>
         <p>Ostatni odczyt: {{ lastValue.timestamp | date : 'medium' }}</p>
     </div>
 </div>
@@ -17,7 +17,7 @@
             [customColors]="colors"
             [yScaleMin]="(temperatureBorders$ | async)?.min"
             [yScaleMax]="(temperatureBorders$ | async)?.max"
-            xAxisLabel="temperature"
+            xAxisLabel="Temperatura"
             [showXAxisLabel]="true"
         ></ngx-charts-line-chart>
     </div>
@@ -30,7 +30,7 @@
             [showRefLabels]="true"
             [xAxis]="true"
             [yAxis]="true"
-            xAxisLabel="battery"
+            xAxisLabel="Bateria"
             [showXAxisLabel]="true"
             [customColors]="colors"
         ></ngx-charts-line-chart>
@@ -46,7 +46,7 @@
             [yAxis]="true"
             [yScaleMin]="0"
             [yScaleMax]="100"
-            xAxisLabel="humidity"
+            xAxisLabel="Wilgotność"
             [showXAxisLabel]="true"
             [customColors]="colors"
         ></ngx-charts-line-chart>

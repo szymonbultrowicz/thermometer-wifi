@@ -1,6 +1,14 @@
 <div class="container">
   <mat-toolbar color="primary" class="toolbar">
-    <a routerLink="/">Termometr szklarniowy</a>
+    <a routerLink="/">Termometr</a>
+    <span class="spacer"></span>
+    <mat-form-field>
+      <mat-select [value]="timeframe$ | async" (valueChange)="changeTimeframe($event)">
+        <mat-option value="1d">Dzień</mat-option>
+        <mat-option value="1w">Tydzień</mat-option>
+        <mat-option value="1mo">Miesiąc</mat-option>
+      </mat-select>
+    </mat-form-field>
   </mat-toolbar>
   <div class="content">
     <router-outlet></router-outlet>

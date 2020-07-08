@@ -11,6 +11,12 @@
 }
 
 .toolbar {
+    // display: flex;
+
+    .spacer {
+        flex: 1 1 auto;
+    }
+
     a, a:hover, a:visited {
         color: white;
         text-decoration: none;;
