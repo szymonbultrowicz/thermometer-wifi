@@ -25,6 +25,7 @@ export class DataService {
     switchMap(timeframe => this.requestWithToken<HistoricalData>(`${ENDPOINT_BASE}/history`, {
       timeframe,
     })),
+    map(this.trimData),
     shareReplay(),
   );
   readonly lastValue$ = this.requestWithToken<LastValue>(`${ENDPOINT_BASE}/last`).pipe(
@@ -68,5 +69,13 @@ export class DataService {
         params,
       })),
     );
+  }
+
+  private trimData(data: HistoricalData): HistoricalData {
+    const firstValue = data.result.findIndex(point => [point.battery, point.humidity, point.temperature].some(v => v != 0));
+    return {
+      ...data,
+      result: data.result.slice(firstValue),
+    };
   }
 }
