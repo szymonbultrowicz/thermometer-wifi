@@ -45,8 +45,8 @@ void WifiPortal::tryConnect() {
 }
 
 void WifiPortal::saveCredentials() {
-    if (!SPIFFS.begin()) {
-        Serial.println("An Error has occurred while mounting SPIFFS");
+    if (!LittleFS.begin()) {
+        Serial.println("An Error has occurred while mounting LittleFS");
         return;
     }
 
@@ -54,12 +54,12 @@ void WifiPortal::saveCredentials() {
     doc["ssid"] = WiFi.SSID();
     doc["password"] = WiFi.psk();
 
-    File configFile = SPIFFS.open("/config.json", "w");
+    File configFile = LittleFS.open("/config.json", "w");
     size_t bytesWritten = serializeJson(doc, configFile);
     if (bytesWritten == 0) {
         Serial.println("Failed to write config file");
     }
-    serializeJson(doc, Serial);
+
     configFile.close();
     Serial.println("Saved config file");
 }
@@ -70,18 +70,18 @@ bool isEmpty(const char* str) {
 
 WifiConfig WifiPortal::loadCredentials() {
     WifiConfig config;
-    if (!SPIFFS.begin()) {
-        Serial.println("An Error has occurred while mounting SPIFFS");
+    if (!LittleFS.begin()) {
+        Serial.println("An Error has occurred while mounting LittleFS");
         return config;
     }
 
-    if (!SPIFFS.exists("/config.json")) {
+    if (!LittleFS.exists("/config.json")) {
         Serial.println("Config file doesn't exist");
         return config;
     }
 
     Serial.println("Reading config file");
-    File configFile = SPIFFS.open("/config.json", "r");
+    File configFile = LittleFS.open("/config.json", "r");
 
     if (!configFile) {
         Serial.println("Failed to open config file");

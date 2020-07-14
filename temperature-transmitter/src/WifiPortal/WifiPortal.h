@@ -5,8 +5,8 @@
 #include <DNSServer.h>
 #include <WiFiManager.h>
 
-#include <FS.h>
 #include <ArduinoJson.h>
+#include <LittleFS.h>
 
 struct WifiConfig {
     char ssid[33];
