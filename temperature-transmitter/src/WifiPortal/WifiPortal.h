@@ -1,23 +1,31 @@
 #ifndef __WIFIPORTAL_H__
 #define __WIFIPORTAL_H__
 
-#include <AutoConnect.h>
-#include <AutoConnectCredential.h>
+#include <ESP8266WebServer.h>
+#include <DNSServer.h>
+#include <WiFiManager.h>
+
+#include <FS.h>
+#include <ArduinoJson.h>
+
+struct WifiConfig {
+    char ssid[33];
+    char password[64];
+    bool empty = true;
+};
 
 class WifiPortal {
     public:
         WifiPortal();
-        void init();
-        void loop();
-        void stop();
-        void clear();
+        boolean configure();
+        // void clear();
         void tryConnect();
         
     private:
+        void saveCredentials();
+        WifiConfig loadCredentials();
         bool enabled;
-        AutoConnect* portal;
-        AutoConnectConfig* config;
-        station_config_t* loadCredentials();
+        WiFiManager* wifiManager;
 };
 
 #endif

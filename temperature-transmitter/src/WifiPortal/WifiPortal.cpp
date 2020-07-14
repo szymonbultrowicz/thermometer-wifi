@@ -1,73 +1,30 @@
 #include "WifiPortal.h"
 #include <ESP8266WebServer.h>
 
+#define BUFFER_SIZE 200
+
 ESP8266WebServer webServer;
 
 WifiPortal::WifiPortal() {
-    this->portal = new AutoConnect(webServer);
-    this->config = new AutoConnectConfig();
-    this->config->apip = IPAddress(192, 168, 111, 1);
-    // this->config->autoReconnect = true;
-    this->config->immediateStart = true;
-    this->enabled = false;
+    this->wifiManager = new WiFiManager();
 }
 
-void WifiPortal::init() {
-    if (!this->enabled) {
-        this->portal->begin();
-        this->enabled = true;
+boolean WifiPortal::configure() {
+    this->wifiManager->setConfigPortalTimeout(180);
+    bool connected = this->wifiManager->startConfigPortal("thermometer", "12345678");
+    if (connected) {
+        this->saveCredentials();
     }
-}
-
-void WifiPortal::loop() {
-    this->init();
-    this->portal->handleClient();
-}
-
-
-void WifiPortal::stop() {
-    if (!this->enabled) {
-        this->portal->end();
-        this->enabled = false;
-    }
-}
-
-void WifiPortal::clear() {
-    AutoConnectCredential credential;
-    station_config_t config;
-    uint8_t ent = credential.entries();
-    uint8_t firstElem = 0;
-    Serial.print("Deleting ");
-    Serial.print(ent);
-    Serial.print(" saved networks");
-    Serial.println();
-
-    while (ent--) {
-        credential.load(firstElem, &config);
-        credential.del((const char*)&config.ssid[0]);
-    }
-}
-
-station_config_t* WifiPortal::loadCredentials() {
-    AutoConnectCredential credential;
-    uint8_t ent = credential.entries();
-    if (ent == 0) {
-        return NULL;
-    }
-
-    station_config_t* config = new station_config_t();
-    uint8_t firstElem = 0;
-    credential.load(firstElem, config);
-    return config;
+    return connected;
 }
 
 void WifiPortal::tryConnect() {
-    station_config_t* credentials = this->loadCredentials();
-    if (credentials != NULL) {
+    WifiConfig credentials = this->loadCredentials();
+    if (!credentials.empty) {
         Serial.print("Connecting to SSID: ");
-        Serial.println((const char*)&credentials->ssid[0]);
+        Serial.println((const char*)&credentials.ssid[0]);
 
-        WiFi.begin((const char*)&credentials->ssid[0], (const char*)&credentials->password[0]);
+        WiFi.begin((const char*)&credentials.ssid[0], (const char*)&credentials.password[0]);
 
         wl_status_t status = WiFi.status();
         int attempt = 1;
@@ -81,9 +38,76 @@ void WifiPortal::tryConnect() {
                 break;
             }
             
-            delay(100);
+            delay(1000);
             status = WiFi.status();
         }
     }
+}
+
+void WifiPortal::saveCredentials() {
+    if (!SPIFFS.begin()) {
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return;
+    }
+
+    StaticJsonDocument<BUFFER_SIZE> doc;
+    doc["ssid"] = WiFi.SSID();
+    doc["password"] = WiFi.psk();
+
+    File configFile = SPIFFS.open("/config.json", "w");
+    size_t bytesWritten = serializeJson(doc, configFile);
+    if (bytesWritten == 0) {
+        Serial.println("Failed to write config file");
+    }
+    serializeJson(doc, Serial);
+    configFile.close();
+    Serial.println("Saved config file");
+}
+
+bool isEmpty(const char* str) {
+    return str == nullptr || strlen(str) == 0;
+}
+
+WifiConfig WifiPortal::loadCredentials() {
+    WifiConfig config;
+    if (!SPIFFS.begin()) {
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return config;
+    }
+
+    if (!SPIFFS.exists("/config.json")) {
+        Serial.println("Config file doesn't exist");
+        return config;
+    }
+
+    Serial.println("Reading config file");
+    File configFile = SPIFFS.open("/config.json", "r");
+
+    if (!configFile) {
+        Serial.println("Failed to open config file");
+        return config;
+    }
+
+    Serial.println("Opened config file");
+
+    StaticJsonDocument<BUFFER_SIZE> doc;
+    if (deserializeJson(doc, configFile)) {
+        Serial.println("Failed to parse config file");
+        return config;
+    }
+
+    const char* ssid = doc["ssid"];
+    const char* password = doc["password"];
+    if (!isEmpty(ssid)) {
+        strcpy(config.ssid, ssid);
+        if (!isEmpty(password)) {
+            strcpy(config.password, password);
+        }
+        config.empty = false;
+    }
+
+    configFile.close();
+
+    return config;
 }
 

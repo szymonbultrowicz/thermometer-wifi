@@ -23,36 +23,24 @@ void setup() {
     // Wait for serial to initialize.
     while(!Serial) { }
 
-    // pinMode(PIN_RESET, INPUT_PULLUP);
-
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, HIGH);
 
     pinMode(PIN_SETUP, INPUT_PULLUP);
 
-    // attachInterrupt(digitalPinToInterrupt(PIN_RESET), resetChangeInterrupt, CHANGE);
 
     tempSensor.init();
     readingSender.init();
 
-    if (!SPIFFS.begin()) {
-        Serial.println("An Error has occurred while mounting SPIFFS");
+    if (!isInConfigMode()) {
+        wifiPortal.tryConnect();
     }
 
-    // wifiPortal.init();
-    wifiPortal.tryConnect();
-
-    delay(100);
+    delay(250);
 }
 
 void loop() {
-    if (digitalRead(PIN_SETUP) == LOW || WiFi.status() != WL_CONNECTED) {
-        digitalWrite(PIN_LED, LOW);
-        wifiPortal.loop();
-        return;
-    }
-    
-    wifiPortal.stop();
+    ensureConnected();
 
     digitalWrite(PIN_LED, LOW);
     ledTimer.attach_ms(100, turnLedOff);
@@ -67,6 +55,16 @@ void loop() {
     sleep();
 }
 
+void ensureConnected() {
+    if (isInConfigMode() || WiFi.status() != WL_CONNECTED) {
+        digitalWrite(PIN_LED, LOW);
+        if (!wifiPortal.configure()) {
+            // Turn off ESP if the wifi failed to configure in the given time
+            ESP.deepSleep(0);
+        }
+    }
+}
+
 void turnLedOff() {
     digitalWrite(PIN_LED, HIGH);
 }
@@ -74,6 +72,10 @@ void turnLedOff() {
 void sleep() {
     tempSensor.halt();
     ESP.deepSleep(LOOP_DELAY);
+}
+
+bool isInConfigMode() {
+    return digitalRead(PIN_SETUP) == LOW;
 }
 
 // ICACHE_RAM_ATTR void resetChangeInterrupt() {
