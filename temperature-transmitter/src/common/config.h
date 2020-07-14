@@ -11,7 +11,7 @@
 #define PIN_LED 2   // D4
 
 #define RESET_DELAY 3   // s
-#define LOOP_DELAY 30e6
+#define LOOP_DELAY 60e6
 
 #define DHTTYPE AM2301
 
