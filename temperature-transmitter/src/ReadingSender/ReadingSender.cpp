@@ -30,8 +30,6 @@ void ReadingSender::updateTime() {
     while(!timeClient.update()){
         timeClient.forceUpdate();
     }
-    Serial.print("Current time: ");
-    Serial.println(timeClient.getFormattedTime());
 }
 
 String ReadingSender::serializeReading(Reading* reading) {
@@ -39,10 +37,6 @@ String ReadingSender::serializeReading(Reading* reading) {
     String humidity = "\"humidity\":" + String(reading->humidity) + ",";
     String battery = "\"battery\":" + String(reading->battery) + ",";
     String timestamp = "\"timestamp\":" + String(timeClient.getEpochTime());
-    Serial.println(temperature);
-    Serial.println(humidity);
-    Serial.println(battery);
-    Serial.println(timestamp);
     return "{"
         + temperature
         + humidity

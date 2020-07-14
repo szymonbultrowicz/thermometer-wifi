@@ -4,68 +4,92 @@
 #include "DHT.h"
 #include "src/common/config.h"
 #include "src/common/reading.h"
-#include "src/sensor/sensor.h"
-#include "src/wifi-config-manager/wifi-config-manager.h"
+#include "src/sensor/TempSensor.h"
 #include "src/ReadingSender/ReadingSender.h"
+#include "src/WifiPortal/WifiPortal.h"
 
 unsigned long resetPressed = 0;
 
 ReadingSender readingSender;
-WifiConfigManager wifiConfigManager;
+TempSensor tempSensor(DHTTYPE, PIN_DHT_POWER, PIN_DHT);
 
-Ticker resetTimer;
+WifiPortal wifiPortal;
+
+Ticker ledTimer;
 
 void setup() {
     Serial.begin(115200);
     Serial.println("Started");
-    DEBUG_MODE = true;
+    // Wait for serial to initialize.
+    while(!Serial) { }
 
-    pinMode(PIN_RESET, INPUT_PULLUP);
-    pinMode(PIN_DHT, INPUT);
+    // pinMode(PIN_RESET, INPUT_PULLUP);
 
-    attachInterrupt(digitalPinToInterrupt(PIN_RESET), resetChangeInterrupt, CHANGE);
+    pinMode(PIN_LED, OUTPUT);
+    digitalWrite(PIN_LED, HIGH);
 
-    sensorInit();
+    pinMode(PIN_SETUP, INPUT_PULLUP);
+
+    // attachInterrupt(digitalPinToInterrupt(PIN_RESET), resetChangeInterrupt, CHANGE);
+
+    tempSensor.init();
     readingSender.init();
 
     if (!SPIFFS.begin()) {
         Serial.println("An Error has occurred while mounting SPIFFS");
     }
 
-    wifiConfigManager.init();
+    // wifiPortal.init();
+    wifiPortal.tryConnect();
 
-    delay(1000);
+    delay(100);
 }
 
 void loop() {
-    wifiConfigManager.loop();
+    if (digitalRead(PIN_SETUP) == LOW || WiFi.status() != WL_CONNECTED) {
+        digitalWrite(PIN_LED, LOW);
+        wifiPortal.loop();
+        return;
+    }
+    
+    wifiPortal.stop();
 
-    if (WiFi.status() == WL_CONNECTED) {
-        Reading* reading = sensorRead();
+    digitalWrite(PIN_LED, LOW);
+    ledTimer.attach_ms(100, turnLedOff);
 
+    Reading* reading = tempSensor.read();
+
+    if (reading != NULL) {
         readingSender.send(reading);
-
-        if (reading != NULL) {
-            delete reading;
-        }
-
-        delay(LOOP_DELAY);
+        delete reading;
     }
+
+    sleep();
 }
 
-ICACHE_RAM_ATTR void resetChangeInterrupt() {
-    bool pressed = digitalRead(PIN_RESET) == LOW;
-    if (pressed) {
-        Serial.println("Reset pressed");
-        resetTimer.attach(5, resetInterrupt);
-    } else {
-        Serial.println("Reset cancelled");
-        resetTimer.detach();
-    }
+void turnLedOff() {
+    digitalWrite(PIN_LED, HIGH);
 }
 
-void resetInterrupt() {
-    Serial.println("Performing factory reset");
-    wifiConfigManager.clear();
-    resetTimer.detach();
+void sleep() {
+    tempSensor.halt();
+    ESP.deepSleep(LOOP_DELAY);
 }
+
+// ICACHE_RAM_ATTR void resetChangeInterrupt() {
+//     bool pressed = digitalRead(PIN_RESET) == LOW;
+//     if (pressed) {
+//         Serial.println("Reset pressed");
+//         resetTimer.attach(RESET_DELAY, resetInterrupt);
+//     } else {
+//         Serial.println("Reset cancelled");
+//         resetTimer.detach();
+//     }
+// }
+
+// void resetInterrupt() {
+//     Serial.println("Performing factory reset");
+//     wifiPortal.clear();
+//     resetTimer.detach();
+//     ESP.restart();
+// }
