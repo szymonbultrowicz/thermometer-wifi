@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "TempSensor.h"
+#include "../common/log.h"
 
 TempSensor::TempSensor(uint8_t type, uint8_t pinPower, uint8_t pinReading) {
     this->sensor = new DHT(pinReading, type);
@@ -25,19 +26,17 @@ void TempSensor::halt() {
 }
 
 void TempSensor::read(Reading* reading) {
+    unsigned long start = millis();
+
     float humidity = this->sensor->readHumidity();
     float temperature = this->sensor->readTemperature();
 
     if (isnan(humidity) || isnan(temperature)) {
-        Serial.println("Failed to get readings");
         return;
     }
 
-    Serial.print("H: ");
-    Serial.println(humidity);
-    Serial.print("T: ");
-    Serial.println(temperature);
-
     reading->temperature = round(temperature * 10.0);
     reading->humidity = round(humidity * 10);
+
+    logDuration("Temp read", millis() - start);
 }

@@ -11,9 +11,14 @@ private:
     uint16_t refVoltage;
     float dividerRatio;
     uint8_t sensePin;
+    uint8_t activationPin;
+
+    void turnOn();
+    void turnOff();
 public:
     BatterySensor(
         uint8_t sensePin,
+        uint8_t activationPin,
         uint16_t refVoltage,
         float dividerRatio
     );

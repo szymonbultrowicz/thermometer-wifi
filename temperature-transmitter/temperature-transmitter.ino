@@ -4,6 +4,7 @@
 #include "DHT.h"
 #include "src/common/config.h"
 #include "src/common/reading.h"
+#include "src/common/log.h"
 #include "src/sensor/TempSensor.h"
 #include "src/battery/BatterySensor.h"
 #include "src/ReadingSender/ReadingSender.h"
@@ -15,6 +16,7 @@ ReadingSender readingSender;
 TempSensor tempSensor(DHTTYPE, PIN_DHT_POWER, PIN_DHT);
 BatterySensor batterySensor(
     PIN_BATTERY_SENSE,
+    PIN_BATTERY_ACT,
     BATTERY_REF_VOLTAGE,
     BATTERY_DIVIDER_RATIO
 );
@@ -24,6 +26,8 @@ WifiPortal wifiPortal;
 Ticker ledTimer;
 
 void setup() {
+    unsigned long setupStart = millis();
+
     Serial.begin(115200);
     Serial.println("Started");
     // Wait for serial to initialize.
@@ -39,13 +43,18 @@ void setup() {
     readingSender.init();
 
     if (!isInConfigMode()) {
+        unsigned long connectStart = millis();
         wifiPortal.tryConnect();
+        logDuration("Connect", millis() - connectStart);
     }
 
     delay(250);
+
+    logDuration("Setup", millis() - setupStart);
 }
 
 void loop() {
+    unsigned long loopStart = millis();
     ensureConnected();
 
     digitalWrite(PIN_LED, LOW);
@@ -56,9 +65,15 @@ void loop() {
     batterySensor.read(reading);
 
     if (isNotEmpty(reading)) {
+        printReading(reading);
+        unsigned long sendStart = millis();
         readingSender.send(reading);
+        logDuration("Send", millis() - sendStart);
+    } else {
+        Serial.println("Failed to read sensors");
     }
     delete reading;
+    logDuration("Loop", millis() - loopStart);
 
     sleep();
 }
@@ -88,4 +103,13 @@ bool isInConfigMode() {
 
 bool isNotEmpty(Reading* reading) {
     return reading->humidity != UNSET_INT && reading->temperature != UNSET_INT;
+}
+
+void printReading(Reading* reading) {
+    Serial.print("T: ");
+    Serial.println(reading->temperature);
+    Serial.print("H: ");
+    Serial.println(reading->humidity);
+    Serial.print("V: ");
+    Serial.println(reading->battery);
 }
