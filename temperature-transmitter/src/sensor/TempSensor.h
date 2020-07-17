@@ -13,7 +13,7 @@ class TempSensor {
         ~TempSensor();
         void init();
         void halt();
-        Reading* read();
+        void read(Reading* reading);
 
     private:
         DHT* sensor;

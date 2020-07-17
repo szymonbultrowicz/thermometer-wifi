@@ -24,13 +24,13 @@ void TempSensor::halt() {
     digitalWrite(pinPower, LOW);
 }
 
-Reading* TempSensor::read() {
+void TempSensor::read(Reading* reading) {
     float humidity = this->sensor->readHumidity();
     float temperature = this->sensor->readTemperature();
 
     if (isnan(humidity) || isnan(temperature)) {
         Serial.println("Failed to get readings");
-        return NULL;
+        return;
     }
 
     Serial.print("H: ");
@@ -38,11 +38,6 @@ Reading* TempSensor::read() {
     Serial.print("T: ");
     Serial.println(temperature);
 
-    Reading* reading = new Reading(
-        round(temperature * 10.0),
-        round(humidity * 10),
-        0
-    );
-
-    return reading;
+    reading->temperature = round(temperature * 10.0);
+    reading->humidity = round(humidity * 10);
 }

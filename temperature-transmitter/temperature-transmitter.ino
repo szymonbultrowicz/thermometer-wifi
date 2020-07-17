@@ -5,6 +5,7 @@
 #include "src/common/config.h"
 #include "src/common/reading.h"
 #include "src/sensor/TempSensor.h"
+#include "src/battery/BatterySensor.h"
 #include "src/ReadingSender/ReadingSender.h"
 #include "src/WifiPortal/WifiPortal.h"
 
@@ -12,6 +13,11 @@ unsigned long resetPressed = 0;
 
 ReadingSender readingSender;
 TempSensor tempSensor(DHTTYPE, PIN_DHT_POWER, PIN_DHT);
+BatterySensor batterySensor(
+    PIN_BATTERY_SENSE,
+    BATTERY_REF_VOLTAGE,
+    BATTERY_DIVIDER_RATIO
+);
 
 WifiPortal wifiPortal;
 
@@ -28,8 +34,8 @@ void setup() {
 
     pinMode(PIN_SETUP, INPUT_PULLUP);
 
-
     tempSensor.init();
+    batterySensor.init();
     readingSender.init();
 
     if (!isInConfigMode()) {
@@ -45,12 +51,14 @@ void loop() {
     digitalWrite(PIN_LED, LOW);
     ledTimer.attach_ms(100, turnLedOff);
 
-    Reading* reading = tempSensor.read();
+    Reading* reading = new Reading();
+    tempSensor.read(reading);
+    batterySensor.read(reading);
 
-    if (reading != NULL) {
+    if (isNotEmpty(reading)) {
         readingSender.send(reading);
-        delete reading;
     }
+    delete reading;
 
     sleep();
 }
@@ -78,20 +86,6 @@ bool isInConfigMode() {
     return digitalRead(PIN_SETUP) == LOW;
 }
 
-// ICACHE_RAM_ATTR void resetChangeInterrupt() {
-//     bool pressed = digitalRead(PIN_RESET) == LOW;
-//     if (pressed) {
-//         Serial.println("Reset pressed");
-//         resetTimer.attach(RESET_DELAY, resetInterrupt);
-//     } else {
-//         Serial.println("Reset cancelled");
-//         resetTimer.detach();
-//     }
-// }
-
-// void resetInterrupt() {
-//     Serial.println("Performing factory reset");
-//     wifiPortal.clear();
-//     resetTimer.detach();
-//     ESP.restart();
-// }
+bool isNotEmpty(Reading* reading) {
+    return reading->humidity != UNSET_INT && reading->temperature != UNSET_INT;
+}
