@@ -11,14 +11,13 @@
 #define PIN_LED 2   // D4
 
 #define RESET_DELAY 3   // s
-#define LOOP_DELAY 10e6
+#define LOOP_DELAY 60e6
 
 #define DHTTYPE AM2301
 
 #define PIN_BATTERY_SENSE A0
 #define PIN_BATTERY_ACT 12  // D6
 #define BATTERY_MIN 4000
-#define BATTERY_MAX 4800
 #define BATTERY_DIVIDER_RATIO 2
 #define BATTERY_REF_VOLTAGE 3300
 
