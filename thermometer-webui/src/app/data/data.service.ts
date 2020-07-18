@@ -5,15 +5,24 @@ import { Injectable } from '@angular/core';
 import { filter, switchMap, map, shareReplay, distinctUntilChanged } from 'rxjs/operators';
 import { TokenService } from './../auth/token.service';
 import { HistoricalData, LastValue, Reading } from './models';
-import { Series } from '@swimlane/ngx-charts';
 
 type QueryParams =  HttpParams | {
   [param: string]: string | string[];
 };
 
+export interface DataPoint {
+  x: number,
+  y: number | null,
+}
+
 const ENDPOINT_BASE = environment.API_URL;
 
 const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
+
+export interface Serie {
+  name: string;
+  data: DataPoint[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -48,14 +57,14 @@ export class DataService {
     );
   }
 
-  private retrieveSeries(data: HistoricalData, series: keyof Reading): Series {
+  private retrieveSeries(data: HistoricalData, series: keyof Reading): Serie {
     const values = data.result.map(entry => ({
-      name: new Date(entry.timestamp),
-      value: entry[series],
+      x: entry.timestamp,
+      y: entry[series] < (series === 'battery' ? 3000 : -99) ? null : entry[series],
     }));
     return {
       name: series,
-      series: values,
+      data: values,
     };
   }
 

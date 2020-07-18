@@ -2,53 +2,48 @@
     <div *ngIf="(lastValue$ | async) as lastValue">
         <p>Temperatura: {{ lastValue.temperature | number : '1.0-1' }}°C</p>
         <p>Wilgotność: {{ lastValue.humidity | number : '1.0-1' }}%</p>
-        <p>Poziom baterii: {{ lastValue.battery}}V </p>
+        <p>Poziom baterii: {{ lastValue.battery / 1000 | number: '1.0-3' }}V </p>
         <p>Ostatni odczyt: {{ lastValue.timestamp | date : 'medium' }}</p>
     </div>
 </div>
 <div class="temperature">
-    <div *ngIf="(temperature$ | async) as series" class="chart">
-        <ngx-charts-line-chart
-            [results]="series"
-            [legend]="false"
-            [showRefLabels]="true"
-            [xAxis]="true"
-            [yAxis]="true"
-            [customColors]="colors"
-            [yScaleMin]="(temperatureBorders$ | async)?.min"
-            [yScaleMax]="(temperatureBorders$ | async)?.max"
-            xAxisLabel="Temperatura"
-            [showXAxisLabel]="true"
-        ></ngx-charts-line-chart>
+    <div class="chart">
+        <apx-chart #temperatureChart
+            [chart]="temperatureChartOptions"
+            [theme]="theme"
+            [xaxis]="xAxisOptions"
+            [yaxis]="{ decimalsInFloat: 1 }"
+            [stroke]="stroke"
+            [series]="temperature$ | async"
+            [colors]="['#3cff00']"
+            ></apx-chart>
     </div>
 </div>
 <div class="battery">
-    <div *ngIf="(battery$ | async) as series" class="chart">
-        <ngx-charts-line-chart
-            [results]="series"
-            [legend]="false"
-            [showRefLabels]="true"
-            [xAxis]="true"
-            [yAxis]="true"
-            xAxisLabel="Bateria"
-            [showXAxisLabel]="true"
-            [customColors]="colors"
-        ></ngx-charts-line-chart>
+    <div class="chart">
+        <apx-chart #batteryChart
+            [title]="{ text: 'Bateria' }" 
+            [chart]="batteryChartOptions"
+            [theme]="theme"
+            [xaxis]="xAxisOptions"
+            [yaxis]="{ decimalsInFloat: 0, min: 3950 }"
+            [stroke]="stroke"
+            [series]="battery$ | async"
+            [colors]="['#fff400']"
+            ></apx-chart>
     </div>
 </div>
 <div class="humidity">
-    <div *ngIf="(humidity$ | async) as series" class="chart">
-        <ngx-charts-line-chart
-            [results]="series"
-            [legend]="false"
-            [showRefLabels]="true"
-            [xAxis]="true"
-            [yAxis]="true"
-            [yScaleMin]="0"
-            [yScaleMax]="100"
-            xAxisLabel="Wilgotność"
-            [showXAxisLabel]="true"
-            [customColors]="colors"
-        ></ngx-charts-line-chart>
+    <div class="chart">
+        <apx-chart #humidityChart
+            [title]="{ text: 'Wilgotność' }" 
+            [chart]="humidityChartOptions"
+            [theme]="theme"
+            [xaxis]="xAxisOptions"
+            [yaxis]="{ decimalsInFloat: 0 }"
+            [stroke]="stroke"
+            [series]="humidity$ | async"
+            [colors]="['#00fff9']"
+            ></apx-chart>
     </div>
 </div>

@@ -7,11 +7,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AppComponent } from './app.component';
 import { TokenGuard } from './auth/token.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { Error401Component } from './error401/error401.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 const routes: Routes = [{
   path: '',
@@ -46,7 +46,7 @@ const routes: Routes = [{
     MatButtonModule,
     MatSelectModule,
     HttpClientModule,
-    NgxChartsModule,
+    NgApexchartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
