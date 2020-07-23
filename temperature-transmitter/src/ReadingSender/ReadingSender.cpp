@@ -12,6 +12,8 @@ void ReadingSender::init() {
 void ReadingSender::send(Reading* reading) {
     this->updateTime();
 
+    unsigned long sendStart = millis();
+
     HTTPClient http;
     http.begin(wifiClient, ENDPOINT);
     http.addHeader("Authorization", TOKEN);
@@ -24,12 +26,16 @@ void ReadingSender::send(Reading* reading) {
     } else {
         Serial.println("Failed to send the reading. Response code: " + String(responseCode));
     }
+
+    logDuration("Sending", millis() - sendStart);
 }
 
 void ReadingSender::updateTime() {
+    unsigned long start = millis();
     while(!timeClient.update()){
         timeClient.forceUpdate();
     }
+    logDuration("NTP", millis() - start);
 }
 
 String ReadingSender::serializeReading(Reading* reading) {

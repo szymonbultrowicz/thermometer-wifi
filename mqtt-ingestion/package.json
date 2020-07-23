@@ -1,0 +1,24 @@
+{
+  "name": "mqtt-ingestion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/szymonbultrowicz/thermometer-wifi/mqtt-ingestion",
+  "author": "Szymon Bultrowicz",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "lodash": "^4.17.19",
+    "mqtt": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.158",
+    "@types/mqtt": "^2.5.0",
+    "@types/node": "12.0.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  }
+}

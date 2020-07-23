@@ -1,4 +1,4 @@
-#include <WiFiClientSecure.h> 
+#include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
 #include "DHT.h"
@@ -18,20 +18,22 @@ BatterySensor batterySensor(
     PIN_BATTERY_SENSE,
     PIN_BATTERY_ACT,
     BATTERY_REF_VOLTAGE,
-    BATTERY_DIVIDER_RATIO
-);
+    BATTERY_DIVIDER_RATIO);
 
 WifiPortal wifiPortal;
 
 Ticker ledTimer;
 
-void setup() {
+void setup()
+{
     unsigned long setupStart = millis();
 
     Serial.begin(115200);
     Serial.println("Started");
     // Wait for serial to initialize.
-    while(!Serial) { }
+    while (!Serial)
+    {
+    }
 
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, HIGH);
@@ -42,7 +44,8 @@ void setup() {
     batterySensor.init();
     readingSender.init();
 
-    if (!isInConfigMode()) {
+    if (!isInConfigMode())
+    {
         unsigned long connectStart = millis();
         wifiPortal.tryConnect();
         logDuration("Connect", millis() - connectStart);
@@ -53,30 +56,33 @@ void setup() {
     logDuration("Setup", millis() - setupStart);
 }
 
-void loop() {
+void loop()
+{
     unsigned long loopStart = millis();
     ensureConnected();
 
     digitalWrite(PIN_LED, LOW);
     ledTimer.attach_ms(100, turnLedOff);
 
-    Reading* reading = new Reading();
+    Reading *reading = new Reading();
     tempSensor.read(reading);
     batterySensor.read(reading);
 
-    if (isNotEmpty(reading)) {
+    if (isNotEmpty(reading))
+    {
         printReading(reading);
-        unsigned long sendStart = millis();
         readingSender.send(reading);
-        logDuration("Send", millis() - sendStart);
-    } else {
+    }
+    else
+    {
         Serial.println("Failed to read sensors");
     }
 
     // Turn off if the battery goes below the min value
-    if (reading->battery > 0 && reading->battery < BATTERY_MIN) {
-        ESP.deepSleep(0);
-    }
+    // if (reading->battery > 0 && reading->battery < BATTERY_MIN)
+    // {
+    //     ESP.deepSleep(0);
+    // }
 
     delete reading;
     logDuration("Loop", millis() - loopStart);
@@ -84,34 +90,43 @@ void loop() {
     sleep();
 }
 
-void ensureConnected() {
-    if (isInConfigMode() || WiFi.status() != WL_CONNECTED) {
+void ensureConnected()
+{
+    if (isInConfigMode() || WiFi.status() != WL_CONNECTED)
+    {
         digitalWrite(PIN_LED, LOW);
-        if (!wifiPortal.configure()) {
+        if (!wifiPortal.configure())
+        {
             // Turn off ESP if the wifi failed to configure in the given time
+            Serial.println('Failed to configure WiFi connection. Turning off...');
             ESP.deepSleep(0);
         }
     }
 }
 
-void turnLedOff() {
+void turnLedOff()
+{
     digitalWrite(PIN_LED, HIGH);
 }
 
-void sleep() {
+void sleep()
+{
     tempSensor.halt();
     ESP.deepSleep(LOOP_DELAY);
 }
 
-bool isInConfigMode() {
+bool isInConfigMode()
+{
     return digitalRead(PIN_SETUP) == LOW;
 }
 
-bool isNotEmpty(Reading* reading) {
+bool isNotEmpty(Reading *reading)
+{
     return reading->humidity != UNSET_INT && reading->temperature != UNSET_INT;
 }
 
-void printReading(Reading* reading) {
+void printReading(Reading *reading)
+{
     Serial.print("T: ");
     Serial.println(reading->temperature);
     Serial.print("H: ");

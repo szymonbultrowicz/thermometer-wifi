@@ -8,6 +8,7 @@
 #include <WiFiClientSecureBearSSL.h>
 #include "../common/config.h"
 #include "../common/reading.h"
+#include "../common/log.h"
 
 class ReadingSender {
     public:
