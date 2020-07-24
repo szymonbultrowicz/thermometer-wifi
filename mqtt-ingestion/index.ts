@@ -1,16 +1,9 @@
+require('dotenv').config();
+
+import { ThermometerReading } from './lib/model';
 import * as mqtt from 'mqtt';
-import { isEmpty } from 'lodash';
-
-const validateDefined = (name: string): string => {
-    const value = process.env[name];
-    if (value == undefined || isEmpty(value)) {
-        console.error(`${name} required`);
-        process.exit(1);
-    }
-    return value;
-}
-
-console.log(process.env);
+import { handleMessage } from './lib/message-handler';
+import { validateDefined } from './lib/util';
 
 const host = validateDefined('MQTT_HOST');
 const topic = validateDefined('MQTT_TOPIC');
@@ -37,10 +30,15 @@ client.subscribe(topic, (err) => {
 client.on('message', (t, msg) => {
     switch (t) {
         case topic:
-            handleMessage(msg.toString('utf-8'));
+            try {
+                const data: ThermometerReading = JSON.parse(msg.toString('utf-8'));
+                handleMessage(data);
+            } catch(e) {
+                if (e instanceof SyntaxError) {
+                    console.error('Failed to parse message as JSON', e);
+                } else {
+                    throw e;
+                }
+            }
     }
 });
-
-function handleMessage(message: string): void {
-    console.log(message);
-}
