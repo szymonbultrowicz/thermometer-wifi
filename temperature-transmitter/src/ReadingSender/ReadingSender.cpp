@@ -1,12 +1,22 @@
 #include "ReadingSender.h"
 
-BearSSL::WiFiClientSecure wifiClient;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
+WiFiClient wifiClient;
+
+ReadingSender::ReadingSender() {
+    this->client = new PubSubClient(MQTT_HOST, MQTT_PORT, wifiClient);
+}
 
 void ReadingSender::init() {
     timeClient.begin();
-    wifiClient.setInsecure();
+    if (!this->client->connected()) {
+        if (!this->client->connect("ESP8266Thermometer", MQTT_USER, MQTT_PASSWORD)) {
+            Serial.print("MQTT connection failed! Error code = ");
+            Serial.println(this->client->state());
+            return;
+        }
+    }
 }
 
 void ReadingSender::send(Reading* reading) {
@@ -14,20 +24,13 @@ void ReadingSender::send(Reading* reading) {
 
     unsigned long sendStart = millis();
 
-    HTTPClient http;
-    http.begin(wifiClient, ENDPOINT);
-    http.addHeader("Authorization", TOKEN);
-    http.addHeader("Content-Type", "application/json");
-    int responseCode = http.POST(this->serializeReading(reading));
-    http.end();
-
-    if (responseCode == 200) {
-        Serial.println("Sent reading");
-    } else {
-        Serial.println("Failed to send the reading. Response code: " + String(responseCode));
-    }
+    this->client->publish(MQTT_TOPIC, this->serializeReading(reading).c_str());
 
     logDuration("Sending", millis() - sendStart);
+}
+
+void ReadingSender::halt() {
+    this->client->disconnect();
 }
 
 void ReadingSender::updateTime() {

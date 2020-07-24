@@ -42,7 +42,7 @@ void setup()
 
     tempSensor.init();
     batterySensor.init();
-    readingSender.init();
+    
 
     if (!isInConfigMode())
     {
@@ -52,6 +52,8 @@ void setup()
     }
 
     delay(250);
+
+    readingSender.init();
 
     logDuration("Setup", millis() - setupStart);
 }
@@ -112,6 +114,7 @@ void turnLedOff()
 void sleep()
 {
     tempSensor.halt();
+    readingSender.halt();
     ESP.deepSleep(LOOP_DELAY);
 }
 
