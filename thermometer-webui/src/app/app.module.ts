@@ -8,7 +8,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { TokenGuard } from './auth/token.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { Error401Component } from './error401/error401.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -22,9 +21,9 @@ const routes: Routes = [{
   component: Error401Component,
 }, {
   path: '',
-  canActivate: [
-    TokenGuard,
-  ],
+  // canActivate: [
+  //   TokenGuard,
+  // ],
   children: [{
     path: 'dashboard',
     component: DashboardComponent,
