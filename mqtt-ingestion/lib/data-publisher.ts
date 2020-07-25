@@ -24,7 +24,7 @@ export const publishDataPoint = async (data: ThermometerReading) => {
         point.floatField('humidity', data.humidity / 10);
     }
     if (isDefined(data.battery)) {
-        point.floatField('battery', data.battery);
+        point.intField('battery', data.battery);
     }
     
     writeApi.writePoint(point);
