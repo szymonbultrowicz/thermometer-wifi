@@ -39,6 +39,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   readonly xAxisOptions: ApexXAxis = {
     type: 'datetime',
+    labels: {
+      datetimeUTC: false,
+    }
   };
 
   readonly stroke: ApexStroke = {
