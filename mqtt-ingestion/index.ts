@@ -27,17 +27,17 @@ client.subscribe(topic, (err) => {
     }
 });
 
-client.on('message', (t, msg) => {
+client.on('message', async (t, msg) => {
     switch (t) {
         case topic:
             try {
                 const data: ThermometerReading = JSON.parse(msg.toString('utf-8'));
-                handleMessage(data);
+                await handleMessage(data);
             } catch(e) {
                 if (e instanceof SyntaxError) {
                     console.error('Failed to parse message as JSON', e);
                 } else {
-                    throw e;
+                    console.error(e);
                 }
             }
     }
