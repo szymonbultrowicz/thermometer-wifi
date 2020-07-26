@@ -70,21 +70,18 @@ void loop()
     tempSensor.read(reading);
     batterySensor.read(reading);
 
-    if (isNotEmpty(reading))
-    {
+    if (isNotEmpty(reading)) {
         printReading(reading);
         readingSender.send(reading);
-    }
-    else
-    {
+    } else {
         Serial.println("Failed to read sensors");
     }
 
     // Turn off if the battery goes below the min value
-    // if (reading->battery > 0 && reading->battery < BATTERY_MIN)
-    // {
-    //     ESP.deepSleep(0);
-    // }
+    if (reading->battery > 0 && reading->battery < BATTERY_MIN)
+    {
+        ESP.deepSleep(0);
+    }
 
     delete reading;
     logDuration("Loop", millis() - loopStart);
