@@ -13,7 +13,7 @@ app.use(cors({
 
 app.get('/history', async (req, res) => {
     try {
-        const history = await fetchHistory(req.params.timeframe);
+        const history = await fetchHistory(req.query.timeframe as (string | undefined));
         res.send({
             result: history,
         });
