@@ -12,16 +12,19 @@
     "build": "gulp"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.6",
     "@types/express": "^4.17.7",
     "@types/lodash": "^4.14.158",
     "@types/node": "^14.0.26",
     "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
   "dependencies": {
     "@influxdata/influxdb-client": "^1.5.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "lodash": "^4.17.19"

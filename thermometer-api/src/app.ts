@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { fetchHistory } from './history';
 import { BadRequestError } from './errors';
 import { fetchLastItem } from './last-value';
@@ -6,6 +7,9 @@ import { fetchLastItem } from './last-value';
 export const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:4200',
+}));
 
 app.get('/history', async (req, res) => {
     try {
