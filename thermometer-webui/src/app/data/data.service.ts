@@ -2,8 +2,7 @@ import { TimeframeService } from './timeframe.service';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { filter, switchMap, map, shareReplay, distinctUntilChanged } from 'rxjs/operators';
-import { TokenService } from './../auth/token.service';
+import { switchMap, map, shareReplay, distinctUntilChanged, tap } from 'rxjs/operators';
 import { HistoricalData, LastValue, Reading } from './models';
 
 type QueryParams =  HttpParams | {
@@ -15,7 +14,7 @@ export interface DataPoint {
   y: number | null,
 }
 
-const ENDPOINT_BASE = environment.API_URL;
+const ENDPOINT_BASE = environment.apiUrl;
 
 const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
 
@@ -43,7 +42,6 @@ export class DataService {
 
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly tokenService: TokenService,
     private readonly timeframeService: TimeframeService,
   ) { }
 
@@ -69,15 +67,9 @@ export class DataService {
   }
 
   private requestWithToken<T>(url: string, params?: QueryParams) {
-    return this.tokenService.token$.pipe(
-      filter(token => token !== undefined),
-      switchMap((token: string) => this.httpClient.get<T>(url, {
-        headers: {
-          Authorization: token,
-        },
-        params,
-      })),
-    );
+    return this.httpClient.get<T>(url, {
+      params,
+    });
   }
 
   private trimData(data: HistoricalData): HistoricalData {

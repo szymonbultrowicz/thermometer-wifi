@@ -1,6 +1,4 @@
-import { environment as apiEnvironment } from './api';
-
 export const environment = {
-  ...apiEnvironment,
+  apiUrl: '/api',
   production: true
 };
