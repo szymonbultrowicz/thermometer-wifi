@@ -9,7 +9,8 @@
   "scripts": {
     "start": "ts-node index.ts",
     "watch": "nodemon --watch *.ts --watch **/*.ts --exec ts-node index.ts",
-    "build": "gulp"
+    "build": "gulp",
+    "deploy": "gulp deploy"
   },
   "dependencies": {
     "@influxdata/influxdb-client": "^1.5.0",
@@ -22,6 +23,8 @@
     "@types/mqtt": "^2.5.0",
     "@types/node": "12.0.0",
     "gulp": "^4.0.2",
+    "gulp-rsync": "^0.0.9",
+    "gulp-ssh": "^0.7.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",
