@@ -14,7 +14,9 @@ app.use(cors({
 app.get('/history', async (req, res) => {
     try {
         const history = await fetchHistory(req.params.timeframe);
-        res.send(history);
+        res.send({
+            result: history,
+        });
     } catch (e) {
         console.error(e);
         if (e instanceof BadRequestError) {
