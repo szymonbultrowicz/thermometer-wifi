@@ -11,6 +11,7 @@ export const handleMessage = async (data: ThermometerReading) => {
     validateIsNumberOrUndefined(data, 'battery');
     validateIsNumberOrUndefined(data, 'timestamp');
     
+    console.log(data);
     publishDataPoint(data);
 };
 
