@@ -1,7 +1,9 @@
-<div class="metrics">
-    <div *ngIf="(lastValue$ | async) as lastValue">
+<div class="metrics" *ngIf="(lastValue$ | async) as lastValue">
+    <div>
         <p>Temperatura: {{ lastValue.temperature | number : '1.0-1' }}°C</p>
         <p>Wilgotność: {{ lastValue.humidity | number : '1.0-1' }}%</p>
+    </div>
+    <div>
         <p>Poziom baterii: {{ lastValue.battery / 1000 | number: '1.0-3' }}V </p>
         <p>Ostatni odczyt: {{ lastValue.timestamp | date : 'medium' }}</p>
     </div>
@@ -15,21 +17,21 @@
         ></highcharts-chart>
     </div>
 </div>
-<div class="battery">
-    <div class="chart" #batteryChart>
-        <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="batteryChartOptions"
-            (chartInstance)="setBatteryChartInstance($event)"
-        ></highcharts-chart>
-    </div>
-</div>
 <div class="humidity">
     <div class="chart" #humidityChart>
         <highcharts-chart
             [Highcharts]="Highcharts"
             [options]="humidityChartOptions"
             (chartInstance)="setHumidityChartInstance($event)"
+        ></highcharts-chart>
+    </div>
+</div>
+<div class="battery">
+    <div class="chart" #batteryChart>
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="batteryChartOptions"
+            (chartInstance)="setBatteryChartInstance($event)"
         ></highcharts-chart>
     </div>
 </div>
