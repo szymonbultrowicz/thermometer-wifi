@@ -1,3 +1,4 @@
+import { ThermometerReading } from './data/model';
 import { fetchQuery, INFLUX_BUCKET } from "./data/data-query";
 import { BadRequestError } from "./errors";
 import { validateDefined } from "./util";
@@ -63,12 +64,25 @@ const fetchData = async (from: string) => {
 |> range(start: ${from}, stop: now())
 |> filter(fn: (r) => r["_measurement"] == "readings")
 |> aggregateWindow(every: ${aggregationWindow(from)}, fn: mean)
+|> fill(value: -1000.0)
 `;
     const startTime = Date.now();
     const rows = await fetchQuery(query);
     const endTime = Date.now();
     console.log(`InfluxDB query took ${endTime - startTime}ms`);
-    return rows;
+    return rows.map(row => ({
+        ...row,
+        temperature: translateToNullish(row.temperature),
+        humidity: translateToNullish(row.humidity),
+        battery: translateToNullish(row.battery),
+    }));
+}
+
+const translateToNullish = (value: number | null | undefined) => {
+    if (value === null || value === undefined) {
+        return null;
+    }
+    return value > -1000 ? value : null;
 }
 
 function validateDuration(value: string) {
