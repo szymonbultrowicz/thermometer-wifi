@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'datetime',
     },
     plotOptions: {
-      line: {
+      spline: {
         marker: {
           enabled: false,
         }
@@ -45,6 +45,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: {
       text: 'Temperatura',
     },
+    plotOptions: {
+      ...this.baseChartOptions.plotOptions,
+      spline: {
+        ...this.baseChartOptions.plotOptions?.spline,
+        color: '#3cff00',
+      }
+    },
   };
 
   humidityChartOptions: Highcharts.Options = {
@@ -52,12 +59,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: {
       text: 'Wilgotność',
     },
+    plotOptions: {
+      ...this.baseChartOptions.plotOptions,
+      spline: {
+        ...this.baseChartOptions.plotOptions?.spline,
+        color: '#00fff9',
+      }
+    },
   };
 
   batteryChartOptions: Highcharts.Options = {
     ...this.baseChartOptions,
     title: {
       text: 'Poziom baterii',
+    },
+    plotOptions: {
+      ...this.baseChartOptions.plotOptions,
+      spline: {
+        ...this.baseChartOptions.plotOptions?.spline,
+        color: '#fff400',
+      }
     },
     yAxis: {
       min: 3900,
@@ -160,7 +181,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       chart.addSeries({
         name: label,
-        type: 'line',
+        type: 'spline',
         data: newDataPoints,
       });
     }
