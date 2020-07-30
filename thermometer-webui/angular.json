@@ -57,7 +57,11 @@
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js"
             ],
-            "i18nLocale": "pl"
+            "i18nLocale": "pl",
+            "allowedCommonJsDependencies": [
+              "highcharts",
+              "highcharts/themes/dark-unica"
+            ]
           },
           "configurations": {
             "production": {
