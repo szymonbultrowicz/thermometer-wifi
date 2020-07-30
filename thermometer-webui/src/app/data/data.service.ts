@@ -10,18 +10,11 @@ type QueryParams =  HttpParams | {
 };
 
 export interface DataPoint {
-  x: number,
-  y: number | null,
+  timestamp: number,
+  value: number | null,
 }
 
 const ENDPOINT_BASE = environment.apiUrl;
-
-const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
-
-export interface Serie {
-  name: string;
-  data: DataPoint[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -55,15 +48,11 @@ export class DataService {
     );
   }
 
-  private retrieveSeries(data: HistoricalData, series: keyof Reading): Serie {
-    const values = data.result.map(entry => ({
-      x: entry.timestamp,
-      y: entry[series] < (series === 'battery' ? 3000 : -99) ? null : entry[series],
-    }));
-    return {
-      name: series,
-      data: values,
-    };
+  private retrieveSeries(data: HistoricalData, series: keyof Reading): DataPoint[] {
+    return data.result.map(entry => ({
+      timestamp: entry.timestamp,
+      value: entry[series] < (series === 'battery' ? 3000 : -99) ? null : entry[series],
+    }));;
   }
 
   private requestWithToken<T>(url: string, params?: QueryParams) {

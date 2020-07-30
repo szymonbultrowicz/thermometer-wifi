@@ -4005,6 +4005,18 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
+highcharts-angular@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/highcharts-angular/-/highcharts-angular-2.7.0.tgz#47e6cd035054d58c11db105d2aa06e368684be3d"
+  integrity sha512-UXH7b+3QfGrsaKGdQ+QvgTVc3sP1LUjKtQWS8CcnKagySLUC/62RiZ3s2IPNwpqkJAedop+6GbV19MNyUUPfFA==
+  dependencies:
+    tslib "^1.10.0"
+
+highcharts@^8.1.2:
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/highcharts/-/highcharts-8.1.2.tgz#a4e7d74a6140028e676a3a54f5fd0ea6ccbcc90e"
+  integrity sha512-Q124Lj+2+bVY2MKMd7d8uSVAmhZVzWgknUUzUBEC27S94dCyK6PBgahuwiMP/ET4w7qSFBBi4OC77ZUb0Vnuyg==
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -5525,13 +5537,6 @@ neo-async@^2.5.0, neo-async@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.1.tgz#ac27ada66167fa8849a6addd837f6b189ad2081c"
   integrity sha512-iyam8fBuCUpWeKPGpaNMetEocMt364qkCsfL9JuhjXX6dRnguRVOfk2GZaDpPjcOKiiXCPINZC1GczQ7iTq3Zw==
-
-ng-apexcharts@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/ng-apexcharts/-/ng-apexcharts-1.5.0.tgz#9b94db77fa9e91a33f527423b25e52d06d993905"
-  integrity sha512-R/DbZzCiVbMg0761pWlvQN147GOPGEdCn+1xN4FjE5GEH0oYibtcKvpXsj8b7OP79S1bhHgmECNE64Rr4inYjQ==
-  dependencies:
-    tslib "^1.10.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

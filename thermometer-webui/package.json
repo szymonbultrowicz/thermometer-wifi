@@ -23,8 +23,9 @@
     "@angular/platform-browser-dynamic": "~9.1.9",
     "@angular/router": "~9.1.9",
     "apexcharts": "^3.19.3",
+    "highcharts": "^8.1.2",
+    "highcharts-angular": "^2.7.0",
     "lodash-es": "^4.17.15",
-    "ng-apexcharts": "^1.5.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

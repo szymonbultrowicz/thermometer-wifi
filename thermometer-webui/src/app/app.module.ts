@@ -7,10 +7,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
+import { HighchartsChartModule } from 'highcharts-angular';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { Error401Component } from './error401/error401.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
+
+import * as Highcharts from 'highcharts';
+import theme from 'highcharts/themes/dark-unica';
+theme(Highcharts);
 
 const routes: Routes = [{
   path: '',
@@ -45,7 +49,7 @@ const routes: Routes = [{
     MatButtonModule,
     MatSelectModule,
     HttpClientModule,
-    NgApexchartsModule,
+    HighchartsChartModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

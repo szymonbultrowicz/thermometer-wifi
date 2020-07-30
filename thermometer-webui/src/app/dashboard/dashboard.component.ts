@@ -1,102 +1,168 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { Reading } from '../data';
-import { DataService, Serie } from './../data/data.service';
-import { maxBy, minBy, cloneDeep } from 'lodash-es';
+import { DataService, DataPoint } from './../data/data.service';
 import { NEVER } from 'rxjs';
-import { ApexChart, ApexXAxis, ApexTheme, ApexStroke, ApexYAxis, ChartComponent } from 'ng-apexcharts';
+import * as Highcharts from 'highcharts';
 
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   lastValue$: Observable<Reading> = NEVER;
-  temperature$: Observable<Serie[]> = NEVER;
-  humidity$: Observable<Serie[]> = NEVER;
-  battery$: Observable<Serie[]> = NEVER;
 
-  temperatureBorders$: Observable<{min: number, max: number}> = NEVER;
+  onDestroy$ = new Subject<never>();
 
-  readonly chartBaseOptions: ApexChart = {
-    type: 'line',
-    zoom: {
-      enabled: false
+  // temperatureBorders$: Observable<{min: number, max: number}> = NEVER;
+
+  Highcharts: typeof Highcharts = Highcharts;
+
+  private baseChartOptions: Highcharts.Options = {
+    chart: {
+      height: null,
+      width: null,
     },
-    background: 'transparent',
-    redrawOnParentResize: true,
-  };
-
-  readonly temperatureChartOptions: ApexChart = cloneDeep(this.chartBaseOptions);
-  readonly humidityChartOptions: ApexChart = cloneDeep(this.chartBaseOptions);
-  readonly batteryChartOptions: ApexChart = cloneDeep(this.chartBaseOptions);
-
-  readonly theme: ApexTheme = {
-    mode: 'dark',
-  };
-
-  readonly xAxisOptions: ApexXAxis = {
-    type: 'datetime',
-    labels: {
-      datetimeUTC: false,
+    legend: {
+      enabled: false,
+    },
+    xAxis: {
+      type: 'datetime',
+    },
+    plotOptions: {
+      line: {
+        marker: {
+          enabled: false,
+        }
+      }
     }
   };
 
-  readonly stroke: ApexStroke = {
-    width: 2,
-  }
+  temperatureChartOptions: Highcharts.Options = {
+    ...this.baseChartOptions,
+    title: {
+      text: 'Temperatura',
+    },
+  };
 
-  @ViewChild('temperatureChart', {read: ElementRef})
-  temperatureChartEl: ElementRef;
+  humidityChartOptions: Highcharts.Options = {
+    ...this.baseChartOptions,
+    title: {
+      text: 'Wilgotność',
+    },
+  };
 
-  @ViewChild('humidityChart', {read: ElementRef})
-  humidityChartEl: ElementRef;
+  batteryChartOptions: Highcharts.Options = {
+    ...this.baseChartOptions,
+    title: {
+      text: 'Poziom baterii',
+    },
+    yAxis: {
+      min: 3900,
+    }
+  };
 
-  @ViewChild('batteryChart', {read: ElementRef})
-  batteryChartEl: ElementRef;
+  @ViewChild('temperatureChart', { read: ElementRef })
+  temperatureChartEl?: ElementRef;
+  temperatureChart?: Highcharts.Chart;
+
+  @ViewChild('humidityChart', { read: ElementRef })
+  humidityChartEl?: ElementRef;
+  humidityChart?: Highcharts.Chart;
+
+  @ViewChild('batteryChart', { read: ElementRef })
+  batteryChartEl?: ElementRef;
+  batteryChart?: Highcharts.Chart;
+
 
   constructor(
     private readonly dataService: DataService,
   ) { }
 
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   ngAfterViewInit(): void {
-    this.temperatureChartOptions.height = this.temperatureChartEl.nativeElement.parentNode.offsetHeight;
-    this.humidityChartOptions.height = this.humidityChartEl.nativeElement.parentNode.offsetHeight;
-    this.batteryChartOptions.height = this.batteryChartEl.nativeElement.parentNode.offsetHeight;
+    this.reflowCharts();
   }
 
   ngOnInit(): void {
     this.lastValue$ = this.dataService.lastValue$.pipe(
       map(data => data.result),
     );
-    this.temperature$ = this.dataService.series$.pipe(
-      map(series => [series.temperature]),
-      startWith([]),
-    );
-    this.humidity$ = this.dataService.series$.pipe(
-      map(series => [series.humidity]),
-      startWith([]),
-    );
-    this.battery$ = this.dataService.series$.pipe(
-      map(series => [series.battery]),
-      startWith([]),
-    );
 
-    this.temperatureBorders$ = this.temperature$.pipe(
-      map(([series]) => ({
-        max: this.maxValue(series),
-        min: this.minValue(series),
-      })),
-    );
+    this.dataService.series$.pipe(
+      map(series => series.temperature),
+      takeUntil(this.onDestroy$),
+    ).subscribe(serie => {
+      this.updateData(this.temperatureChart, serie, 'Temperatura');
+    });
+
+    this.dataService.series$.pipe(
+      map(series => series.humidity),
+      takeUntil(this.onDestroy$),
+    ).subscribe(serie => {
+      this.updateData(this.humidityChart, serie, 'Wilgotność');
+    });
+
+    this.dataService.series$.pipe(
+      map(series => series.battery),
+      takeUntil(this.onDestroy$),
+    ).subscribe(serie => {
+      this.updateData(this.batteryChart, serie, 'Poziom baterii');
+    });
   }
 
-  private maxValue(serie: Serie): number {
-    return Math.ceil(maxBy(serie.data, 'y')?.y as (number | undefined) ?? 0);
+  @HostListener('window:resize', ['$event'])
+  onResize(event: UIEvent) {
+    this.reflowCharts();
+}
+
+  setTemperatureChartInstance(chart: Highcharts.Chart) {
+    this.temperatureChart = chart;
+    this.reflowCharts();
   }
 
-  private minValue(serie: Serie): number {
-    return Math.floor(minBy(serie.data, 'y')?.y as (number | undefined) ?? 0);
+  setHumidityChartInstance(chart: Highcharts.Chart) {
+    this.humidityChart = chart;
+    this.reflowCharts();
+  }
+
+  setBatteryChartInstance(chart: Highcharts.Chart) {
+    this.batteryChart = chart;
+    this.reflowCharts();
+  }
+
+  private reflowCharts() {
+    this.reflowChart(this.temperatureChart, this.temperatureChartEl);
+    this.reflowChart(this.humidityChart, this.humidityChartEl);
+    this.reflowChart(this.batteryChart, this.batteryChartEl);
+  }
+
+  private reflowChart(chart?: Highcharts.Chart, el?: ElementRef) {
+    if (chart && el) {
+      chart.setSize(el.nativeElement.offsetWidth, el.nativeElement.offsetHeight);
+    }
+  }
+
+  private updateData(chart: Highcharts.Chart | undefined, data: DataPoint[], label: string) {
+    if (!chart) {
+      return;
+    }
+    const newDataPoints = data.map(v => [v.timestamp, v.value]);
+    console.log(newDataPoints);
+    if (chart.series.length > 0) {
+      chart.series[0].setData(newDataPoints);
+    } else {
+      chart.addSeries({
+        name: label,
+        type: 'line',
+        data: newDataPoints,
+      });
+    }
   }
 }

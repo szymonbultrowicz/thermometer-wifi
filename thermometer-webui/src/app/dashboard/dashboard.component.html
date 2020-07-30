@@ -7,43 +7,29 @@
     </div>
 </div>
 <div class="temperature">
-    <div class="chart">
-        <apx-chart #temperatureChart
-            [chart]="temperatureChartOptions"
-            [theme]="theme"
-            [xaxis]="xAxisOptions"
-            [yaxis]="{ decimalsInFloat: 1 }"
-            [stroke]="stroke"
-            [series]="temperature$ | async"
-            [colors]="['#3cff00']"
-            ></apx-chart>
+    <div class="chart" #temperatureChart>
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="temperatureChartOptions"
+            (chartInstance)="setTemperatureChartInstance($event)"
+        ></highcharts-chart>
     </div>
 </div>
 <div class="battery">
-    <div class="chart">
-        <apx-chart #batteryChart
-            [title]="{ text: 'Bateria' }" 
-            [chart]="batteryChartOptions"
-            [theme]="theme"
-            [xaxis]="xAxisOptions"
-            [yaxis]="{ decimalsInFloat: 0, min: 3950 }"
-            [stroke]="stroke"
-            [series]="battery$ | async"
-            [colors]="['#fff400']"
-            ></apx-chart>
+    <div class="chart" #batteryChart>
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="batteryChartOptions"
+            (chartInstance)="setBatteryChartInstance($event)"
+        ></highcharts-chart>
     </div>
 </div>
 <div class="humidity">
-    <div class="chart">
-        <apx-chart #humidityChart
-            [title]="{ text: 'Wilgotność' }" 
-            [chart]="humidityChartOptions"
-            [theme]="theme"
-            [xaxis]="xAxisOptions"
-            [yaxis]="{ decimalsInFloat: 0 }"
-            [stroke]="stroke"
-            [series]="humidity$ | async"
-            [colors]="['#00fff9']"
-            ></apx-chart>
+    <div class="chart" #humidityChart>
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="humidityChartOptions"
+            (chartInstance)="setHumidityChartInstance($event)"
+        ></highcharts-chart>
     </div>
 </div>
