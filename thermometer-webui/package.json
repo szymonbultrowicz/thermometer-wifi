@@ -27,7 +27,7 @@
     "highcharts": "^8.1.2",
     "highcharts-angular": "^2.7.0",
     "lodash-es": "^4.17.15",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
@@ -44,15 +44,15 @@
     "dotenv": "^8.2.0",
     "gulp": "^4.0.2",
     "gulp-rsync": "^0.0.9",
-    "jasmine-core": "~3.5.0",
+    "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
-    "karma": "~5.0.0",
+    "karma": "~5.1.1",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
-    "ts-node": "~8.3.0",
+    "ts-node": "~8.10.2",
     "tslint": "~6.1.0",
     "typescript": "~3.9.7"
   }
