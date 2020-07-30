@@ -15,6 +15,7 @@ gulp.task('deploy', () =>
             root: `${DIST_PATH}/`,
             destination: deploymentPath,
             archive: true,
+            recursive: true,
             silent: false,
             compress: true,
             chmod: "ugo=rwX",
