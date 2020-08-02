@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map, startWith, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Reading } from '../data';
 import { DataService, DataPoint } from './../data/data.service';
 import { NEVER } from 'rxjs';
@@ -24,6 +24,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     chart: {
       height: null,
       width: null,
+      style: {
+        fontFamily: 'Roboto, "Helvetica Neue", sans-serif'
+      }
     },
     legend: {
       enabled: false,
@@ -36,6 +39,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         marker: {
           enabled: false,
         }
+      },
+    },
+    tooltip: {
+      formatter: function() {
+        const date = new Date(this.x);
+        return `${this.series.name}: <b>${Math.round(this.y * 10) / 10}</b><br />${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
       }
     }
   };
@@ -45,13 +54,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: {
       text: 'Temperatura',
     },
-    plotOptions: {
-      ...this.baseChartOptions.plotOptions,
-      spline: {
-        ...this.baseChartOptions.plotOptions?.spline,
-        color: '#3cff00',
-      }
-    },
+    colors: ['#3cff00'],
   };
 
   humidityChartOptions: Highcharts.Options = {
@@ -59,13 +62,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: {
       text: 'Wilgotność',
     },
-    plotOptions: {
-      ...this.baseChartOptions.plotOptions,
-      spline: {
-        ...this.baseChartOptions.plotOptions?.spline,
-        color: '#00fff9',
-      }
-    },
+    colors: ['#00fff9'],
   };
 
   batteryChartOptions: Highcharts.Options = {
@@ -73,13 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     title: {
       text: 'Poziom baterii',
     },
-    plotOptions: {
-      ...this.baseChartOptions.plotOptions,
-      spline: {
-        ...this.baseChartOptions.plotOptions?.spline,
-        color: '#fff400',
-      }
-    },
+    colors: ['#fff400'],
     yAxis: {
       min: 3900,
     }
