@@ -1,7 +1,5 @@
-import { ThermometerReading } from './data/model';
-import { fetchQuery, INFLUX_BUCKET } from "./data/data-query";
-import { BadRequestError } from "./errors";
-import { validateDefined } from "./util";
+import { fetchQuery, INFLUX_BUCKET } from "../data/data-query";
+import { BadRequestError } from "../errors";
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;

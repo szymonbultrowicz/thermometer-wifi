@@ -1,4 +1,4 @@
-import { fetchQuery, INFLUX_BUCKET } from './data/data-query';
+import { fetchQuery, INFLUX_BUCKET } from '../data/data-query';
 
 export const fetchLastItem = async () => {
     const query = `from(bucket: "${INFLUX_BUCKET}")

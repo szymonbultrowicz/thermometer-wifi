@@ -16,7 +16,7 @@ gulp.task('tsc', () =>
 );
 
 gulp.task('copy', () =>
-    gulp.src(['yarn.lock', 'package.json'])
+    gulp.src(['yarn.lock', 'package.json', '*-firebase-adminsdk-*.json'])
         .pipe(gulp.dest(`./${DIST_PATH}`))
 );
 

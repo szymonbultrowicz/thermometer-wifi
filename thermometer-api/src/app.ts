@@ -1,8 +1,9 @@
+import { sendNotification } from './notifier/notifier';
 import express from 'express';
 import cors from 'cors';
-import { fetchHistory } from './history';
+import { fetchHistory } from './query-api/history';
 import { BadRequestError } from './errors';
-import { fetchLastItem } from './last-value';
+import { fetchLastItem } from './query-api/last-value';
 
 export const app = express();
 app.use(express.urlencoded({ extended: false }));
@@ -27,7 +28,6 @@ app.get('/history', async (req, res) => {
     }
 });
 
-
 app.get('/last', async (req, res) => {
     try {
         const lastItem = await fetchLastItem();
@@ -41,5 +41,15 @@ app.get('/last', async (req, res) => {
         } else {
             res.sendStatus(500);
         }
+    }
+});
+
+app.post('/notifications', async (req, res) => {
+    try {
+        await sendNotification(2.5);
+        res.sendStatus(200);
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(e);
     }
 });
