@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Termometr szklarniowy</string>
+    <string name="notification_channel_low_temp_warning_name">Ostrzeżenie o niskiej temperaturze</string>
+    <string name="notification_low_temp_warning_text">Temperatura spadła do %s°C</string>
+</resources>
