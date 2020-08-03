@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Greenhouse Notifier</string>
-    <string name="msg_token_fmt" translatable="false">InstanceID token: %s</string>
     <string name="notification_channel_low_temp_warning_id" translatable="false">fcm_channel_low_temp_warning</string>
     <string name="notification_channel_low_temp_warning_name">Low temperature warning</string>
     <string name="notification_low_temp_warning_text">Temperature dropped to %s°C</string>

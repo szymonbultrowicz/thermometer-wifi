@@ -3,7 +3,6 @@ package pl.bultrowicz.greenhouse
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,9 +20,11 @@ class MainActivity : AppCompatActivity() {
         FirebaseMessaging.getInstance()
             .subscribeToTopic(TOPIC_NAME)
             .addOnCompleteListener { task ->
-                val msg = if (task.isSuccessful) "Subscribed to the topic" else "Failed to subscribe to the topic"
-                Log.d(TAG, msg)
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Subscribed to topic: $TOPIC_NAME")
+                } else {
+                    Log.w(TAG, "Failed to subscribe to topic $TOPIC_NAME", task.exception)
+                }
             }
     }
 
@@ -37,11 +38,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnCompleteListener
                 }
 
-                val token = task.result?.token
-
-                val msg = getString(R.string.msg_token_fmt, token)
-                Log.d(TAG, msg)
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "InstanceID token: $task.result?.token")
             })
     }
 
