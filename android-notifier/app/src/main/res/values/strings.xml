@@ -3,4 +3,5 @@
     <string name="notification_channel_low_temp_warning_id" translatable="false">fcm_channel_low_temp_warning</string>
     <string name="notification_channel_low_temp_warning_name">Low temperature warning</string>
     <string name="notification_low_temp_warning_text">Temperature dropped to %s°C</string>
+    <string name="webui_url" translatable="false">https://szklarnia.bultrowicz.pl</string>
 </resources>
