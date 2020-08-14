@@ -44,11 +44,12 @@ void setup()
     batterySensor.init();
     
 
-    if (!isInConfigMode())
-    {
+    if (!isInConfigMode()) {
         unsigned long connectStart = millis();
         wifiPortal.tryConnect();
         logDuration("Connect", millis() - connectStart);
+    } else {
+        configureWifi();
     }
 
     delay(250);
@@ -63,8 +64,8 @@ void loop()
     unsigned long loopStart = millis();
     ensureConnected();
 
-    digitalWrite(PIN_LED, LOW);
-    ledTimer.attach_ms(100, turnLedOff);
+    turnLedOn();
+    ledTimer.attach_ms(50, turnLedOff);
 
     Reading *reading = new Reading();
     tempSensor.read(reading);
@@ -78,8 +79,7 @@ void loop()
     }
 
     // Turn off if the battery goes below the min value
-    if (reading->battery > 0 && reading->battery < BATTERY_MIN)
-    {
+    if (reading->battery > 0 && reading->battery < BATTERY_MIN) {
         ESP.deepSleep(0);
     }
 
@@ -89,22 +89,30 @@ void loop()
     sleep();
 }
 
+void configureWifi() {
+    turnLedOn();
+    if (!wifiPortal.configure())
+    {
+        // Turn off ESP if the wifi failed to configure in the given time
+        Serial.println('Failed to configure WiFi connection. Turning off...');
+        ESP.deepSleep(0);
+    }
+    turnLedOff();
+}
+
 void ensureConnected()
 {
-    if (isInConfigMode() || WiFi.status() != WL_CONNECTED)
-    {
-        digitalWrite(PIN_LED, LOW);
-        if (!wifiPortal.configure())
-        {
-            // Turn off ESP if the wifi failed to configure in the given time
-            Serial.println('Failed to configure WiFi connection. Turning off...');
-            ESP.deepSleep(0);
-        }
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println('Failed to connect to wifi. Going into sleep mode...');
+        sleep();
     }
 }
 
-void turnLedOff()
-{
+void turnLedOn() {
+    digitalWrite(PIN_LED, LOW);
+}
+
+void turnLedOff() {
     digitalWrite(PIN_LED, HIGH);
 }
 
