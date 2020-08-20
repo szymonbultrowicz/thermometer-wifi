@@ -47,3 +47,7 @@
         filter: invert(1)
     }
 }
+
+:host ::ng-deep .mat-form-field-infix {
+    width: 120px;
+}
