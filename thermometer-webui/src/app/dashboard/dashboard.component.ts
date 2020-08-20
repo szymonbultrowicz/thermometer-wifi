@@ -16,6 +16,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDestroy$ = new Subject<never>();
 
+  loading = true;
+
   // temperatureBorders$: Observable<{min: number, max: number}> = NEVER;
 
   Highcharts: typeof Highcharts = Highcharts;
@@ -127,6 +129,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(serie => {
       this.updateData(this.batteryChart, serie, 'Poziom baterii');
     });
+
+    this.handleLoadingState();
+  }
+
+  handleLoadingState() {
+    this.dataService.refreshAction$.pipe(
+      takeUntil(this.onDestroy$),
+    ).subscribe(() => {
+      this.loading = true;
+    });
+
+    this.dataService.series$.pipe(
+      takeUntil(this.onDestroy$),
+    ).subscribe(() => {
+      this.loading = false;
+    });
   }
 
   @HostListener('window:resize', ['$event'])
@@ -166,7 +184,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const newDataPoints = data.map(v => [v.timestamp, v.value]);
-    console.log(newDataPoints);
     if (chart.series.length > 0) {
       chart.series[0].setData(newDataPoints);
     } else {
@@ -176,5 +193,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         data: newDataPoints,
       });
     }
+    
   }
 }

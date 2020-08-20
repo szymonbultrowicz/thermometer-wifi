@@ -2,8 +2,9 @@ import { TimeframeService } from './timeframe.service';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { switchMap, map, shareReplay, distinctUntilChanged, tap } from 'rxjs/operators';
+import { switchMap, map, shareReplay, distinctUntilChanged, tap, startWith } from 'rxjs/operators';
 import { HistoricalData, LastValue, Reading } from './models';
+import { merge, combineLatest, Subject } from 'rxjs';
 
 type QueryParams =  HttpParams | {
   [param: string]: string | string[];
@@ -21,22 +22,34 @@ const ENDPOINT_BASE = environment.apiUrl;
 })
 export class DataService {
 
-  readonly historicalData$ = this.timeframeService.timeframe$.pipe(
-    distinctUntilChanged(),
-    switchMap(timeframe => this.requestWithToken<HistoricalData>(`${ENDPOINT_BASE}/history`, {
+  private _refreshAction$ = new Subject<void>();
+
+  readonly historicalData$ = combineLatest(
+    this.timeFrameService.timeframe$.pipe(distinctUntilChanged()),
+    this.refreshAction$.pipe(startWith(undefined)),
+  ).pipe(
+    switchMap(([timeframe]) => this.requestWithToken<HistoricalData>(`${ENDPOINT_BASE}/history`, {
       timeframe,
     })),
-    map(this.trimData),
-    shareReplay(),
-  );
-  readonly lastValue$ = this.requestWithToken<LastValue>(`${ENDPOINT_BASE}/last`).pipe(
     shareReplay(),
   );
 
+  readonly lastValue$ = this.refreshAction$.pipe(
+    startWith(undefined),
+    switchMap(() => this.requestWithToken<LastValue>(`${ENDPOINT_BASE}/last`).pipe(
+      shareReplay(),
+    ))
+  );
+  
+
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly timeframeService: TimeframeService,
+    private readonly timeFrameService: TimeframeService,
   ) { }
+
+  get refreshAction$() {
+    return this._refreshAction$.asObservable();
+  }
 
   get series$() {
     return this.historicalData$.pipe(
@@ -46,6 +59,10 @@ export class DataService {
         battery: this.retrieveSeries(data, 'battery'),
       })),
     );
+  }
+
+  refresh() {
+    this._refreshAction$.next();
   }
 
   private retrieveSeries(data: HistoricalData, series: keyof Reading): DataPoint[] {
@@ -59,13 +76,5 @@ export class DataService {
     return this.httpClient.get<T>(url, {
       params,
     });
-  }
-
-  private trimData(data: HistoricalData): HistoricalData {
-    const firstValue = data.result.findIndex(point => [point.battery, point.humidity, point.temperature].some(v => v != 0));
-    return {
-      ...data,
-      result: data.result.slice(firstValue),
-    };
   }
 }

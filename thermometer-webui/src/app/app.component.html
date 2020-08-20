@@ -9,6 +9,9 @@
         <mat-option value="1mo">Miesiąc</mat-option>
       </mat-select>
     </mat-form-field>
+    <a class="refresh" (click)="refresh()">
+      <img src="assets/refresh-icon.svg" />
+    </a>
   </mat-toolbar>
   <div class="content">
     <router-outlet></router-outlet>

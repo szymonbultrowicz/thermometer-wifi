@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 const DEFAULT_TIMEFRAME = '1d';
 
@@ -17,4 +17,5 @@ export class TimeframeService {
   change(value: string) {
     this._timeframe$.next(value);
   }
+
 }

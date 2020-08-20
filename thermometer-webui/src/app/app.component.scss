@@ -28,3 +28,22 @@
         text-decoration: none;;
     }
 }
+
+.refresh {
+    height: 30px;
+    width: 30px;
+    padding: 5px;
+    cursor: pointer;
+    display: block;
+    margin-left: 10px;;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    img {
+        height: 100%;
+        width: 100%;
+        filter: invert(1)
+    }
+}
