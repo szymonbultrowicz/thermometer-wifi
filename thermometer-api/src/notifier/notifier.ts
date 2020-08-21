@@ -12,8 +12,6 @@ admin.initializeApp({
 export const sendNotification = async (temperature: number) =>
     admin.messaging().sendToTopic(firebaseTopic, {
         data: {
-            title: "test",
-            body: "lorem ipsum",
             temperature: temperature.toString(),
         },
     })
