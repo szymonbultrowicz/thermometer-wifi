@@ -1,5 +1,6 @@
 package pl.bultrowicz.greenhouse
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -16,10 +18,23 @@ class MainActivity : AppCompatActivity() {
         subscribeToTopics()
         registerInFirebase()
 
-        val webView = findViewById<WebView>(R.id.mainWebView)
+        initializeWebView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getWebView().reload()
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun initializeWebView() {
+        val webView = getWebView()
         webView.settings.javaScriptEnabled = true
         webView.loadUrl(getString(R.string.webui_url))
     }
+
+    private fun getWebView() =
+        findViewById<WebView>(R.id.mainWebView)
 
     private fun subscribeToTopics() {
         FirebaseMessaging.getInstance()
