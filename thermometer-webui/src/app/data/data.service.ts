@@ -2,9 +2,9 @@ import { TimeframeService } from './timeframe.service';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { switchMap, map, shareReplay, distinctUntilChanged, tap, startWith } from 'rxjs/operators';
+import { switchMap, map, shareReplay, distinctUntilChanged, tap, startWith, share } from 'rxjs/operators';
 import { HistoricalData, LastValue, Reading } from './models';
-import { merge, combineLatest, Subject } from 'rxjs';
+import { merge, combineLatest, Subject, timer } from 'rxjs';
 
 type QueryParams =  HttpParams | {
   [param: string]: string | string[];
@@ -16,6 +16,7 @@ export interface DataPoint {
 }
 
 const ENDPOINT_BASE = environment.apiUrl;
+const AUTOREFRESH_INTERVAL = 15_000;
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +25,19 @@ export class DataService {
 
   private _refreshAction$ = new Subject<void>();
 
+  get refreshAction$() {
+    return this._refreshAction$.asObservable();
+  }
+
+  readonly refreshTrigger$ = this.refreshAction$.pipe(
+    startWith(undefined),
+    switchMap(() => timer(0, AUTOREFRESH_INTERVAL)),
+    share(),
+  );
+
   readonly historicalData$ = combineLatest(
     this.timeFrameService.timeframe$.pipe(distinctUntilChanged()),
-    this.refreshAction$.pipe(startWith(undefined)),
+    this.refreshTrigger$,
   ).pipe(
     switchMap(([timeframe]) => this.requestWithToken<HistoricalData>(`${ENDPOINT_BASE}/history`, {
       timeframe,
@@ -34,8 +45,7 @@ export class DataService {
     shareReplay(),
   );
 
-  readonly lastValue$ = this.refreshAction$.pipe(
-    startWith(undefined),
+  readonly lastValue$ = this.refreshTrigger$.pipe(
     switchMap(() => this.requestWithToken<LastValue>(`${ENDPOINT_BASE}/last`).pipe(
       shareReplay(),
     ))
@@ -46,10 +56,6 @@ export class DataService {
     private readonly httpClient: HttpClient,
     private readonly timeFrameService: TimeframeService,
   ) { }
-
-  get refreshAction$() {
-    return this._refreshAction$.asObservable();
-  }
 
   get series$() {
     return this.historicalData$.pipe(
