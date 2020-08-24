@@ -1,0 +1,49 @@
+{
+	"folders": [
+		{
+			"path": "thermometer-webui"
+		},
+		{
+			"path": "temperature-transmitter"
+		},
+		{
+			"path": "thermometer-history"
+		},
+		{
+			"path": "thermometer-ingestion"
+		},
+		{
+			"path": "thermometer-last"
+		},
+		{
+			"path": "mqtt-ingestion"
+		},
+		{
+			"path": "thermometer-api"
+		},
+		{
+			"path": "android-notifier"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cmath": "cpp",
+			"array": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"vector": "cpp",
+			"initializer_list": "cpp",
+			"regex": "cpp",
+			"*.tcc": "cpp",
+			"functional": "cpp",
+			"istream": "cpp",
+			"tuple": "cpp",
+			"utility": "cpp",
+			"fstream": "cpp",
+			"ostream": "cpp",
+			"sstream": "cpp"
+		}
+	}
+}
