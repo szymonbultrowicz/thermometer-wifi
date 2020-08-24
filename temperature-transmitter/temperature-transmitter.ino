@@ -46,7 +46,9 @@ void setup()
 
     if (!isInConfigMode()) {
         unsigned long connectStart = millis();
-        wifiPortal.tryConnect();
+        if (!tryFastReconnect()) {
+            wifiPortal.tryConnect();
+        }
         logDuration("Connect", millis() - connectStart);
     } else {
         configureWifi();
@@ -59,13 +61,24 @@ void setup()
     logDuration("Setup", millis() - setupStart);
 }
 
+boolean tryFastReconnect() {
+    int counter = 0;
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(5);     // use small delays, NOT 500ms
+        if (++counter > 1000) return false;     // 5 sec timeout
+    }
+    return true;
+}
+
 void loop()
 {
     unsigned long loopStart = millis();
     ensureConnected();
 
-    turnLedOn();
-    ledTimer.attach_ms(50, turnLedOff);
+    if (LED_TIME > 0) {
+        turnLedOn();
+        ledTimer.attach_ms(50, turnLedOff);
+    }
 
     Reading *reading = new Reading();
     tempSensor.read(reading);

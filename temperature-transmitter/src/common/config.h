@@ -13,6 +13,8 @@
 #define RESET_DELAY 3   // s
 #define LOOP_DELAY 60e6
 
+#define LED_TIME 0  // ms
+
 #define DHTTYPE AM2301
 
 #define PIN_BATTERY_SENSE A0
