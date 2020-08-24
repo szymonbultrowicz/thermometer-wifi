@@ -14,5 +14,4 @@ export const sendNotification = async (temperature: number) =>
         data: {
             temperature: temperature.toString(),
         },
-    })
-    .then(console.log);
+    });

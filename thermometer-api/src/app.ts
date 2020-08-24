@@ -46,6 +46,7 @@ app.get('/last', async (req, res) => {
 
 app.post('/notifications', async (req, res) => {
     try {
+        console.log("Notification content:", req.body);
         await sendNotification(req.body.temperature);
         res.sendStatus(200);
     } catch(e) {
