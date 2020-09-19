@@ -15,7 +15,6 @@ TempSensor::~TempSensor() {
 }
 
 void TempSensor::init() {
-    pinMode(pinReading, INPUT);
     pinMode(pinPower, OUTPUT);
     digitalWrite(pinPower, HIGH);
     this->sensor->begin();
@@ -28,8 +27,21 @@ void TempSensor::halt() {
 void TempSensor::read(Reading* reading) {
     unsigned long start = millis();
 
-    float humidity = this->sensor->readHumidity();
-    float temperature = this->sensor->readTemperature();
+    float humidity = this->sensor->readHumidity(true);
+    float temperature = this->sensor->readTemperature(true);
+
+    int retryCount = 0;
+    while (isnan(humidity) || isnan(temperature)) {
+        Serial.print("Failed to read temperature sensor. Attempt: ");
+        Serial.println(retryCount + 1);
+        delay(100);
+        humidity = this->sensor->readHumidity();
+        temperature = this->sensor->readTemperature();
+
+        if (++retryCount > 30) {
+            return;
+        }
+    }
 
     if (isnan(humidity) || isnan(temperature)) {
         return;

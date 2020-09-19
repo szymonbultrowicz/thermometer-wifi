@@ -77,7 +77,7 @@ void loop()
 
     if (LED_TIME > 0) {
         turnLedOn();
-        ledTimer.attach_ms(50, turnLedOff);
+        ledTimer.attach_ms(LED_TIME, turnLedOff);
     }
 
     Reading *reading = new Reading();
@@ -107,7 +107,7 @@ void configureWifi() {
     if (!wifiPortal.configure())
     {
         // Turn off ESP if the wifi failed to configure in the given time
-        Serial.println('Failed to configure WiFi connection. Turning off...');
+        Serial.println("Failed to configure WiFi connection. Turning off...");
         ESP.deepSleep(0);
     }
     turnLedOff();
@@ -115,9 +115,13 @@ void configureWifi() {
 
 void ensureConnected()
 {
+    int counter = 0;
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println('Failed to connect to wifi. Going into sleep mode...');
-        sleep();
+        delay(50);
+        if (++counter > 20) { // 1s
+            Serial.println("Failed to connect to wifi. Going into sleep mode...");
+            sleep();
+        }
     }
 }
 
