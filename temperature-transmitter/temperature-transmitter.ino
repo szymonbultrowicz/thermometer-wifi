@@ -47,6 +47,7 @@ void setup()
     if (!isInConfigMode()) {
         unsigned long connectStart = millis();
         if (!tryFastReconnect()) {
+            Serial.println("Fast reconnect failed. Trying normal reconnect...");
             wifiPortal.tryConnect();
         }
         logDuration("Connect", millis() - connectStart);
@@ -54,7 +55,7 @@ void setup()
         configureWifi();
     }
 
-    delay(250);
+    delay(SETUP_DELAY);
 
     readingSender.init();
 

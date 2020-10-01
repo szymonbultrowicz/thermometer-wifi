@@ -12,6 +12,7 @@
 
 #define RESET_DELAY 3   // s
 #define LOOP_DELAY 60e6
+#define SETUP_DELAY 250    // ms
 
 #define LED_TIME 0  // ms
 

@@ -27,8 +27,8 @@ void TempSensor::halt() {
 void TempSensor::read(Reading* reading) {
     unsigned long start = millis();
 
-    float humidity = this->sensor->readHumidity(true);
-    float temperature = this->sensor->readTemperature(true);
+    float humidity = this->sensor->readHumidity();
+    float temperature = this->sensor->readTemperature(false);
 
     int retryCount = 0;
     while (isnan(humidity) || isnan(temperature)) {
