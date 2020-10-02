@@ -5,3 +5,4 @@
 1. [PageBuilder](https://github.com/Hieromon/PageBuilder)
 1. [WiFiManager](https://github.com/tzapu/WiFiManager)
 1. [BatterySense](https://github.com/rlogiacco/BatterySense)
+1. [StreamUtils](https://github.com/bblanchon/ArduinoStreamUtils)

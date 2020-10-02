@@ -7,10 +7,17 @@
 
 #include <ArduinoJson.h>
 #include <LittleFS.h>
+#include <StreamUtils.h>
 
 struct WifiConfig {
     char ssid[33];
     char password[64];
+    bool useDhcp = false;
+    IPAddress ip;
+    IPAddress subnet;
+    IPAddress gateway;
+    IPAddress dns1;
+    IPAddress dns2;
     bool empty = true;
 };
 
@@ -22,7 +29,7 @@ class WifiPortal {
         void tryConnect();
         
     private:
-        void saveCredentials();
+        void saveCredentials(WifiConfig* config);
         WifiConfig loadCredentials();
         bool enabled;
         WiFiManager* wifiManager;
