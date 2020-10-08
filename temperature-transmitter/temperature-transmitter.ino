@@ -92,7 +92,7 @@ void loop()
     batterySensor.read(reading);
     unsigned long readingTime = millis() - readingStart;
 
-    if (!isNotEmpty(reading)) {
+    if (isNotEmpty(reading)) {
         reading->connectionTime = connectionTime;
         reading->readTime = readingTime;
         printReading(reading);
