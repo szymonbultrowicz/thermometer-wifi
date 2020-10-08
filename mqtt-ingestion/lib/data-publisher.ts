@@ -25,6 +25,12 @@ export const publishDataPoint = async (data: ThermometerReading) => {
     if (isDefined(data.battery)) {
         point.intField('battery', data.battery);
     }
+    if (isDefined(data.connectionTime)) {
+        point.intField('connectionTime', data.connectionTime);
+    }
+    if (isDefined(data.readTime)) {
+        point.intField('readTime', data.readTime);
+    }
     
     const writeApi = client.getWriteApi(INFLUX_ORG, INFLUX_BUCKET);
     writeApi.writePoint(point);

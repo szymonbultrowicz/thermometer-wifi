@@ -9,6 +9,8 @@ export const handleMessage = async (data: ThermometerReading) => {
     validateIsNumberOrUndefined(data, 'temperature');
     validateIsNumberOrUndefined(data, 'humidity');
     validateIsNumberOrUndefined(data, 'battery');
+    validateIsNumberOrUndefined(data, 'connectionTime');
+    validateIsNumberOrUndefined(data, 'readTime');
     validateIsNumberOrUndefined(data, 'timestamp');
     
     console.log(data);
