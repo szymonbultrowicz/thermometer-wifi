@@ -25,8 +25,6 @@ void TempSensor::halt() {
 }
 
 void TempSensor::read(Reading* reading) {
-    unsigned long start = millis();
-
     float humidity = this->sensor->readHumidity();
     float temperature = this->sensor->readTemperature(false);
 
@@ -49,6 +47,4 @@ void TempSensor::read(Reading* reading) {
 
     reading->temperature = round(temperature * 10.0);
     reading->humidity = round(humidity * 10);
-
-    logDuration("Temp read", millis() - start);
 }

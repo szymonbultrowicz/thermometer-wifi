@@ -1,5 +1,7 @@
 #include "ReadingSender.h"
 
+#define BUFFER_SIZE 512
+
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 WiFiClient wifiClient;
@@ -29,6 +31,16 @@ void ReadingSender::send(Reading* reading) {
     logDuration("Sending", millis() - sendStart);
 }
 
+void ReadingSender::sendError(ReadingError* error) {
+    this->updateTime();
+
+    unsigned long sendStart = millis();
+
+    this->client->publish(MQTT_TOPIC, this->serializeReadingError(error).c_str());
+
+    logDuration("Sending", millis() - sendStart);
+}
+
 void ReadingSender::halt() {
     this->client->disconnect();
 }
@@ -42,14 +54,29 @@ void ReadingSender::updateTime() {
 }
 
 String ReadingSender::serializeReading(Reading* reading) {
-    String temperature = "\"temperature\":" + String(reading->temperature) + ",";
-    String humidity = "\"humidity\":" + String(reading->humidity) + ",";
-    String battery = "\"battery\":" + String(reading->battery) + ",";
-    String timestamp = "\"timestamp\":" + String(timeClient.getEpochTime());
-    return "{"
-        + temperature
-        + humidity
-        + battery
-        + timestamp
-    + "}";
+    StaticJsonDocument<BUFFER_SIZE> doc;
+    doc["temperature"] = reading->temperature;
+    doc["humidity"] = reading->humidity;
+    doc["battery"] = reading->battery;
+    doc["connectionTime"] = reading->connectionTime;
+    doc["readTime"] = reading->readTime;
+    doc["timestamp"] = timeClient.getEpochTime();
+
+    String output;
+    serializeJson(doc, output);
+    return output;
 }
+
+String ReadingSender::serializeReadingError(ReadingError* error) {
+    StaticJsonDocument<BUFFER_SIZE> doc;
+    doc["battery"] = error->battery;
+    doc["connectionTime"] = error->connectionTime;
+    doc["readTime"] = error->readTime;
+    doc["error"] = error->error;
+    doc["timestamp"] = timeClient.getEpochTime();
+
+    String output;
+    serializeJson(doc, output);
+    return output;
+}
+

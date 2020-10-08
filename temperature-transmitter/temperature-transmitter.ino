@@ -4,6 +4,7 @@
 #include "DHT.h"
 #include "src/common/config.h"
 #include "src/common/reading.h"
+#include "src/common/ReadingError.h"
 #include "src/common/log.h"
 #include "src/sensor/TempSensor.h"
 #include "src/battery/BatterySensor.h"
@@ -23,6 +24,8 @@ BatterySensor batterySensor(
 WifiPortal wifiPortal;
 
 Ticker ledTimer;
+
+int connectionTime = -1;
 
 void setup()
 {
@@ -50,7 +53,8 @@ void setup()
             Serial.println("Fast reconnect failed. Trying normal reconnect...");
             wifiPortal.tryConnect();
         }
-        logDuration("Connect", millis() - connectStart);
+        connectionTime = millis() - connectStart;
+        logDuration("Connect", connectionTime);
     } else {
         configureWifi();
     }
@@ -82,14 +86,20 @@ void loop()
     }
 
     Reading *reading = new Reading();
+
+    unsigned long readingStart = millis();
     tempSensor.read(reading);
     batterySensor.read(reading);
+    unsigned long readingTime = millis() - readingStart;
 
-    if (isNotEmpty(reading)) {
+    if (!isNotEmpty(reading)) {
+        reading->connectionTime = connectionTime;
+        reading->readTime = readingTime;
         printReading(reading);
         readingSender.send(reading);
     } else {
         Serial.println("Failed to read sensors");
+        sendDhtError(&readingSender, connectionTime, readingTime, reading->battery);
     }
 
     // Turn off if the battery goes below the min value
@@ -159,4 +169,18 @@ void printReading(Reading *reading)
     Serial.println(reading->humidity);
     Serial.print("V: ");
     Serial.println(reading->battery);
+    Serial.print("CT: ");
+    Serial.println(reading->connectionTime);
+    Serial.print("RT: ");
+    Serial.println(reading->readTime);
+}
+
+void sendDhtError(ReadingSender* readingSender, int connectionTime, int readingTime, int battery) {
+    ReadingError* readingError = new ReadingError();
+    readingError->error = "Failed to read DHT sensor";
+    readingError->connectionTime = connectionTime;
+    readingError->readTime = readingTime;
+    readingError->battery = battery;
+    readingSender->sendError(readingError);
+    delete readingError;
 }
