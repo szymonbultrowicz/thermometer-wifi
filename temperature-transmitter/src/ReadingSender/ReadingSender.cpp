@@ -26,7 +26,10 @@ void ReadingSender::send(Reading* reading) {
 
     unsigned long sendStart = millis();
 
-    this->client->publish(MQTT_TOPIC, this->serializeReading(reading).c_str());
+    if (!this->client->publish(MQTT_TOPIC, this->serializeReading(reading).c_str())) {
+        Serial.println("Failed to send the reading");
+    }
+    
 
     logDuration("Sending", millis() - sendStart);
 }
@@ -36,7 +39,9 @@ void ReadingSender::sendError(ReadingError* error) {
 
     unsigned long sendStart = millis();
 
-    this->client->publish(MQTT_TOPIC, this->serializeReadingError(error).c_str());
+    if (!this->client->publish(MQTT_TOPIC, this->serializeReadingError(error).c_str())) {
+        Serial.println("Failed to send the error");
+    }
 
     logDuration("Sending", millis() - sendStart);
 }
@@ -55,12 +60,12 @@ void ReadingSender::updateTime() {
 
 String ReadingSender::serializeReading(Reading* reading) {
     StaticJsonDocument<BUFFER_SIZE> doc;
-    doc["temperature"] = reading->temperature;
-    doc["humidity"] = reading->humidity;
-    doc["battery"] = reading->battery;
-    doc["connectionTime"] = reading->connectionTime;
-    doc["readTime"] = reading->readTime;
-    doc["timestamp"] = timeClient.getEpochTime();
+    doc["t"] = reading->temperature;
+    doc["h"] = reading->humidity;
+    doc["b"] = reading->battery;
+    doc["ct"] = reading->connectionTime;
+    doc["rt"] = reading->readTime;
+    doc["time"] = timeClient.getEpochTime();
 
     String output;
     serializeJson(doc, output);
@@ -69,14 +74,16 @@ String ReadingSender::serializeReading(Reading* reading) {
 
 String ReadingSender::serializeReadingError(ReadingError* error) {
     StaticJsonDocument<BUFFER_SIZE> doc;
-    doc["battery"] = error->battery;
-    doc["connectionTime"] = error->connectionTime;
-    doc["readTime"] = error->readTime;
-    doc["error"] = error->error;
-    doc["timestamp"] = timeClient.getEpochTime();
+    doc["b"] = error->battery;
+    doc["ct"] = error->connectionTime;
+    doc["rt"] = error->readTime;
+    doc["e"] = error->error;
+    doc["time"] = timeClient.getEpochTime();
 
     String output;
     serializeJson(doc, output);
+    Serial.print("Error: ");
+    Serial.println(output);
     return output;
 }
 
