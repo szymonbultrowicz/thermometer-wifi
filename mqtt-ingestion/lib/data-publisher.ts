@@ -14,22 +14,22 @@ const isDefined = (value: number | undefined | null): value is number => isNumbe
 
 export const publishDataPoint = async (data: ThermometerReading) => {
     const point = new Point('readings')
-        .timestamp(data.timestamp ? new Date(data.timestamp * 1000) : new Date());
+        .timestamp(data.time ? new Date(data.time * 1000) : new Date());
 
-    if (isDefined(data.temperature)) {
-        point.floatField('temperature', data.temperature / 10);
+    if (isDefined(data.t)) {
+        point.floatField('temperature', data.t / 10);
     }
-    if (isDefined(data.humidity)) {
-        point.floatField('humidity', data.humidity / 10);
+    if (isDefined(data.h)) {
+        point.floatField('humidity', data.h / 10);
     }
-    if (isDefined(data.battery)) {
-        point.intField('battery', data.battery);
+    if (isDefined(data.b)) {
+        point.intField('battery', data.b);
     }
-    if (isDefined(data.connectionTime)) {
-        point.intField('connectionTime', data.connectionTime);
+    if (isDefined(data.ct)) {
+        point.intField('connectionTime', data.ct);
     }
-    if (isDefined(data.readTime)) {
-        point.intField('readTime', data.readTime);
+    if (isDefined(data.rt)) {
+        point.intField('readTime', data.rt);
     }
     
     const writeApi = client.getWriteApi(INFLUX_ORG, INFLUX_BUCKET);

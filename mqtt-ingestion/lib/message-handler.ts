@@ -3,17 +3,20 @@ import { ThermometerReading } from "./model";
 import { isNil, isNumber } from 'lodash';
 
 export const handleMessage = async (data: ThermometerReading) => {
-    if (!data.timestamp) {
+    if (!data.time) {
         throw new Error(`Undefined mandatory property: timestamp`);
     }
-    validateIsNumberOrUndefined(data, 'temperature');
-    validateIsNumberOrUndefined(data, 'humidity');
-    validateIsNumberOrUndefined(data, 'battery');
-    validateIsNumberOrUndefined(data, 'connectionTime');
-    validateIsNumberOrUndefined(data, 'readTime');
-    validateIsNumberOrUndefined(data, 'timestamp');
+    validateIsNumberOrUndefined(data, 't');
+    validateIsNumberOrUndefined(data, 'h');
+    validateIsNumberOrUndefined(data, 'b');
+    validateIsNumberOrUndefined(data, 'ct');
+    validateIsNumberOrUndefined(data, 'rt');
+    validateIsNumberOrUndefined(data, 'time');
     
     console.log(data);
+    if (!isNil(data.e)) {
+        console.warn(data.e);
+    }
     publishDataPoint(data);
 };
 
