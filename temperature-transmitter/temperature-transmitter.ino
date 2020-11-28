@@ -7,7 +7,6 @@
 #include "src/common/config.h"
 #include "src/common/reading.h"
 #include "src/common/ReadingError.h"
-#include "src/common/log.h"
 #include "src/sensor/TempSensor.h"
 #include "src/battery/BatterySensor.h"
 #include "src/ReadingSender/ReadingSender.h"

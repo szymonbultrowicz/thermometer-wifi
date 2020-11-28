@@ -10,7 +10,6 @@
 #include "../common/config.h"
 #include "../common/reading.h"
 #include "../common/ReadingError.h"
-#include "../common/log.h"
 #include "../logger/Logger.h"
 
 #define MQTT_CLIENT_DEBUG

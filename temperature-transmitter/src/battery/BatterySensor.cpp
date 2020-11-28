@@ -1,5 +1,4 @@
 #include "BatterySensor.h"
-#include "../common/log.h"
 
 BatterySensor::BatterySensor(
     Logger* logger,

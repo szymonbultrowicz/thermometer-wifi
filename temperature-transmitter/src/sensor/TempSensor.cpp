@@ -1,6 +1,5 @@
 #include "Arduino.h"
 #include "TempSensor.h"
-#include "../common/log.h"
 
 TempSensor::TempSensor(uint8_t type, uint8_t pinPower, uint8_t pinReading) {
     this->sensor = new DHT(pinReading, type);
