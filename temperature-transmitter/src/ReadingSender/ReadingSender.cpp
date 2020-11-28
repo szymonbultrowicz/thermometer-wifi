@@ -6,7 +6,8 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org");
 WiFiClient wifiClient;
 
-ReadingSender::ReadingSender() {
+ReadingSender::ReadingSender(Logger* logger) {
+    this->logger = logger;
     this->client = new PubSubClient(MQTT_HOST, MQTT_PORT, wifiClient);
 }
 
@@ -31,7 +32,7 @@ void ReadingSender::send(Reading* reading) {
     }
     
 
-    logDuration("Sending", millis() - sendStart);
+    this->logger->logDuration("Sending", millis() - sendStart);
 }
 
 void ReadingSender::sendError(ReadingError* error) {
@@ -43,7 +44,7 @@ void ReadingSender::sendError(ReadingError* error) {
         Serial.println("Failed to send the error");
     }
 
-    logDuration("Sending", millis() - sendStart);
+    this->logger->logDuration("Sending", millis() - sendStart);
 }
 
 void ReadingSender::halt() {
@@ -55,7 +56,7 @@ void ReadingSender::updateTime() {
     while(!timeClient.update()){
         timeClient.forceUpdate();
     }
-    logDuration("NTP", millis() - start);
+    this->logger->logDuration("NTP", millis() - start);
 }
 
 String ReadingSender::serializeReading(Reading* reading) {

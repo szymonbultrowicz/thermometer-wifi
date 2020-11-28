@@ -14,6 +14,10 @@
 #define LOOP_DELAY 60e6
 #define SETUP_DELAY 250    // ms
 
+#define LOG_SAVE_ENABLED true
+#define LOG_PATH "/output.log"
+#define LOG_MAX_LENGTH 1000
+
 #define LED_TIME 0  // ms
 
 #define DHTTYPE AM2301

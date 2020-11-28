@@ -11,18 +11,20 @@
 #include "../common/reading.h"
 #include "../common/ReadingError.h"
 #include "../common/log.h"
+#include "../logger/Logger.h"
 
 #define MQTT_CLIENT_DEBUG
 
 class ReadingSender {
     public:
-        ReadingSender();
+        ReadingSender(Logger* logger);
         void init();
         void send(Reading* reading);
         void sendError(ReadingError* error);
         void halt();
     private:
         PubSubClient* client;
+        Logger* logger;
 
         void updateTime();
         String serializeReading(Reading* reading);

@@ -3,6 +3,7 @@
 
 #include <Battery.h>
 #include "../common/reading.h"
+#include "../logger/Logger.h"
 
 class BatterySensor
 {
@@ -12,11 +13,13 @@ private:
     float dividerRatio;
     uint8_t sensePin;
     uint8_t activationPin;
+    Logger* logger;
 
     void turnOn();
     void turnOff();
 public:
     BatterySensor(
+        Logger* logger,
         uint8_t sensePin,
         uint8_t activationPin,
         uint16_t refVoltage,

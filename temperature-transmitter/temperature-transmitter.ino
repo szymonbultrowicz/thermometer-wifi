@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
 #include "DHT.h"
+#include <LittleFS.h>
 #include "src/common/config.h"
 #include "src/common/reading.h"
 #include "src/common/ReadingError.h"
@@ -10,22 +12,21 @@
 #include "src/battery/BatterySensor.h"
 #include "src/ReadingSender/ReadingSender.h"
 #include "src/WifiPortal/WifiPortal.h"
+#include "src/logger/Logger.h"
 
 unsigned long resetPressed = 0;
 
-ReadingSender readingSender;
+ReadingSender* readingSender;
 TempSensor tempSensor(DHTTYPE, PIN_DHT_POWER, PIN_DHT);
-BatterySensor batterySensor(
-    PIN_BATTERY_SENSE,
-    PIN_BATTERY_ACT,
-    BATTERY_REF_VOLTAGE,
-    BATTERY_DIVIDER_RATIO);
+BatterySensor* batterySensor;
 
 WifiPortal wifiPortal;
 
 Ticker ledTimer;
 
 int connectionTime = -1;
+
+Logger* logger;
 
 void setup()
 {
@@ -38,13 +39,21 @@ void setup()
     {
     }
 
+    logger = new Logger();
+
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, HIGH);
 
     pinMode(PIN_SETUP, INPUT_PULLUP);
 
     tempSensor.init();
-    batterySensor.init();
+    batterySensor = new BatterySensor(
+        logger,
+        PIN_BATTERY_SENSE,
+        PIN_BATTERY_ACT,
+        BATTERY_REF_VOLTAGE,
+        BATTERY_DIVIDER_RATIO);
+    batterySensor->init();
     
 
     if (!isInConfigMode()) {
@@ -54,16 +63,17 @@ void setup()
             wifiPortal.tryConnect();
         }
         connectionTime = millis() - connectStart;
-        logDuration("Connect", connectionTime);
+        logger->logDuration("Connect", connectionTime);
     } else {
         configureWifi();
     }
 
     delay(SETUP_DELAY);
 
-    readingSender.init();
+    readingSender = new ReadingSender(logger);
+    readingSender->init();
 
-    logDuration("Setup", millis() - setupStart);
+    logger->logDuration("Setup", millis() - setupStart);
 }
 
 boolean tryFastReconnect() {
@@ -75,10 +85,21 @@ boolean tryFastReconnect() {
     return true;
 }
 
+void sleep(unsigned int delay = LOOP_DELAY)
+{
+    tempSensor.halt();
+    readingSender->halt();
+    delete readingSender;
+    logger->halt();
+    delete logger;
+    ESP.deepSleep(LOOP_DELAY);
+}
+
 void loop()
 {
     unsigned long loopStart = millis();
     ensureConnected();
+    logger->logPerm("Connected");
 
     if (LED_TIME > 0) {
         turnLedOn();
@@ -89,26 +110,29 @@ void loop()
 
     unsigned long readingStart = millis();
     tempSensor.read(reading);
-    batterySensor.read(reading);
+    batterySensor->read(reading);
     unsigned long readingTime = millis() - readingStart;
 
     if (isNotEmpty(reading)) {
         reading->connectionTime = connectionTime;
         reading->readTime = readingTime;
         printReading(reading);
-        readingSender.send(reading);
+        logger->logPerm("DHT success");
+        readingSender->send(reading);
     } else {
         Serial.println("Failed to read sensors");
-        sendDhtError(&readingSender, connectionTime, readingTime, reading->battery);
+        logger->logPerm("DHT fail");
+        sendDhtError(readingSender, connectionTime, readingTime, reading->battery);
     }
 
     // Turn off if the battery goes below the min value
     if (reading->battery > 0 && reading->battery < BATTERY_MIN) {
-        ESP.deepSleep(0);
+        logger->logPerm("Battery low, turning off");
+        sleep(0);
     }
 
     delete reading;
-    logDuration("Loop", millis() - loopStart);
+    logger->logDuration("Loop", millis() - loopStart);
 
     sleep();
 }
@@ -118,8 +142,8 @@ void configureWifi() {
     if (!wifiPortal.configure())
     {
         // Turn off ESP if the wifi failed to configure in the given time
-        Serial.println("Failed to configure WiFi connection. Turning off...");
-        ESP.deepSleep(0);
+        logger->logPerm("WiFi configuration failure, turning off");
+        sleep(0);
     }
     turnLedOff();
 }
@@ -130,7 +154,7 @@ void ensureConnected()
     if (WiFi.status() != WL_CONNECTED) {
         delay(50);
         if (++counter > 20) { // 1s
-            Serial.println("Failed to connect to wifi. Going into sleep mode...");
+            Serial.println("WiFi connection error, putting to sleep");
             sleep();
         }
     }
@@ -142,13 +166,6 @@ void turnLedOn() {
 
 void turnLedOff() {
     digitalWrite(PIN_LED, HIGH);
-}
-
-void sleep()
-{
-    tempSensor.halt();
-    readingSender.halt();
-    ESP.deepSleep(LOOP_DELAY);
 }
 
 bool isInConfigMode()
@@ -177,7 +194,7 @@ void printReading(Reading *reading)
 
 void sendDhtError(ReadingSender* readingSender, int connectionTime, int readingTime, int battery) {
     ReadingError* readingError = new ReadingError();
-    readingError->error = "Failed to read DHT sensor";
+    readingError->error = "DHT error";
     readingError->connectionTime = connectionTime;
     readingError->readTime = readingTime;
     readingError->battery = battery;

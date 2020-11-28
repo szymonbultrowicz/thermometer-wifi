@@ -2,11 +2,13 @@
 #include "../common/log.h"
 
 BatterySensor::BatterySensor(
+    Logger* logger,
     uint8_t sensePin,
     uint8_t activationPin,
     uint16_t refVoltage,
     float dividerRatio
 ) {
+    this->logger = logger;
     this->sensePin = sensePin;
     this->activationPin = activationPin;
     this->refVoltage = refVoltage;
@@ -32,7 +34,7 @@ void BatterySensor::read(Reading* reading) {
     uint16_t voltage = analogValue * this->refVoltage * this->dividerRatio / 1024;
     reading->battery = voltage;
 
-    logDuration("Battery read", millis() - start);
+    this->logger->logDuration("Battery read", millis() - start);
 }
 
 void BatterySensor::turnOn() {
