@@ -1,4 +1,4 @@
-import { sendNotification } from './notifier/notifier';
+import { sendNotifications } from './notifier/notifier';
 import express from 'express';
 import cors from 'cors';
 import { fetchHistory } from './query-api/history';
@@ -44,13 +44,24 @@ app.get('/last', async (req, res) => {
     }
 });
 
-app.post('/notifications', async (req, res) => {
+// app.post('/notifications', async (req, res) => {
+//     try {
+//         console.log("Notification content:", req.body);
+//         await sendNotification(req.body);
+//         res.sendStatus(200);
+//     } catch(e) {
+//         console.error(e);
+//         res.sendStatus(e);
+//     }
+// });
+
+app.put('/notifications', async (req, res) => {
     try {
-        console.log("Notification content:", req.body);
-        await sendNotification(req.body.temperature);
+        await sendNotifications();
         res.sendStatus(200);
     } catch(e) {
         console.error(e);
         res.sendStatus(e);
     }
 });
+
