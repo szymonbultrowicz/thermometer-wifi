@@ -41,7 +41,7 @@ export const fetchQuery = async (query: string): Promise<ThermometerReading[]> =
 const rowsToData = (rows: InfluxEntry[]) => {
     const map = rows.reduce((acc, row) => {
         const item = acc[row._time] ?? { timestamp: new Date(row._time).getTime() };
-        item[row._field] = row._value;
+        item[row._field] = typeof row._value === "string" ? parseFloat(row._value) : row._value;
         acc[row._time] = item;
         return acc;
     }, {} as  {[k: number]: ThermometerReading});
