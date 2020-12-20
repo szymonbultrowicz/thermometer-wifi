@@ -49,6 +49,7 @@ void Logger::halt() {
         Serial.println(this->buffer);
         File f = LittleFS.open("/output.log", "w+");
         f.print(this->existingLogContent.substring(std::max(this->existingLogContent.length(), (unsigned int)LOG_MAX_LENGTH) - LOG_MAX_LENGTH));
+        f.print(this->buffer);
         f.close();
     }
 }
