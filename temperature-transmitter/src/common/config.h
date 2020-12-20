@@ -12,7 +12,7 @@
 
 #define RESET_DELAY 3   // s
 #define LOOP_DELAY 60e6
-#define SETUP_DELAY 250    // ms
+#define SETUP_DELAY 500    // ms
 
 #define LOG_SAVE_ENABLED true
 #define LOG_PATH "/output.log"
