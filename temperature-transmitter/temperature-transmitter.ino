@@ -77,6 +77,7 @@ void setup()
 
 boolean tryFastReconnect() {
     int counter = 0;
+    Serial.println("Fast reconnecting...");
     while (WiFi.status() != WL_CONNECTED) {
         delay(5);     // use small delays, NOT 500ms
         if (++counter > 1000) return false;     // 5 sec timeout
