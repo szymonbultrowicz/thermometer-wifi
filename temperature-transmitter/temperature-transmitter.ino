@@ -125,10 +125,10 @@ void loop()
     }
 
     // Turn off if the battery goes below the min value
-    // if (reading->battery > 0 && reading->battery < BATTERY_MIN) {
-    //     logger->logPerm("Battery low, turning off");
-    //     sleep(0);
-    // }
+    if (reading->battery > 0 && reading->battery < BATTERY_MIN) {
+        logger->logPerm("Battery low, turning off");
+        sleep(0);
+    }
 
     delete reading;
     logger->logDuration("Loop", millis() - loopStart);
