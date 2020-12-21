@@ -8,3 +8,6 @@ export const validateDefined = (name: string): string => {
     }
     return value;
 }
+
+export const isDefined = <T>(value: T | undefined | null): value is T => 
+    value !== undefined && value !== null;

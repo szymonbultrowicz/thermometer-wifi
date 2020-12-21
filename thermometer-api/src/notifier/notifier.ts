@@ -1,11 +1,13 @@
 import { generateAlerts, Alert } from './alert-generator';
-import { fetchLastState, fetchCurrentState, updateState } from './state-manager';
+import { fetchLastState, fetchCurrentState, updateState, State } from './state-manager';
 import { createRedisClient } from './redis';
 import * as admin from 'firebase-admin';
-import { validateDefined } from '../util';
+import { validateDefined, isDefined } from '../util';
 
 const firebaseUrl = validateDefined('FIREBASE_URL');
 const firebaseTopic = validateDefined('FIREBASE_TOPIC');
+
+const LIVENESS_TRESHOLD = parseInt(process.env.LIVENESS_TRESHOLD ?? "5", 10) * 60_000;  // min
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
@@ -21,11 +23,16 @@ const sendNotification = async (alert: Alert) =>
         },
     });
 
+const fillLiveness = (state: State): State => ({
+    ...state,
+    alive: isDefined(state.timestamp) && Date.now() - state.timestamp <= LIVENESS_TRESHOLD
+});
+    
 
 export const sendNotifications = async () => {
     const redis = createRedisClient();
     const oldState = await fetchLastState(redis);
-    const newState = await fetchCurrentState();
+    const newState = fillLiveness(await fetchCurrentState());
 
     console.log("oldState", oldState);
     console.log("newState", newState);

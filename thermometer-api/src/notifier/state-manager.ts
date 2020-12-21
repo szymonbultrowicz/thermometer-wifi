@@ -4,6 +4,8 @@ import { RedisClient } from "redis";
 export interface State {
     temperature?: number | null;
     battery?: number | null;
+    timestamp?: number | null;
+    alive?: boolean | null;
 }
 
 const SET_KEY = "greenhouse";
@@ -35,6 +37,7 @@ export const fetchCurrentState = async (): Promise<State> => {
     const state: State = {
         temperature: lastInfluxItem.temperature,
         battery: lastInfluxItem.battery,
+        timestamp: lastInfluxItem.timestamp,
     };
 
     return state;

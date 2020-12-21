@@ -1,4 +1,5 @@
 import { State } from "./state-manager";
+import { isDefined } from "../util";
 
 type Resource = "temperature" | "battery" | "liveness";
 type ResourceState = "low" | "ok";
@@ -12,7 +13,6 @@ export interface Alert {
     value: number;
 };
 
-const isDefined = <T>(value: T | undefined | null): value is T => value !== undefined && value !== null;
 
 const isStateDifferent = (oldValue: number | undefined | null, newValue: number | undefined | null, treshold: number): boolean => {
     if (!isDefined(newValue)) {
@@ -42,7 +42,23 @@ const generateBatteryAlerts = (oldState: State, newState: State): Alert[] =>
         }]
         : [];
 
+const generateLivenessAlerts = (oldState: State, newState: State): Alert[] => {
+    if (!isDefined(oldState.alive) || !isDefined(newState.alive)) {
+        return [];
+    }
+    if (oldState.alive === newState.alive) {
+        return [];
+    }
+
+    return [{
+        resource: "liveness",
+        state: newState.alive ? "ok" : "low",
+        value: newState.alive ? 1 : 0,
+    }];
+};
+
 export const generateAlerts = (oldState: State, newState: State) => [
     ...generateTemperatureAlerts(oldState, newState),
     ...generateBatteryAlerts(oldState, newState),
+    ...generateLivenessAlerts(oldState, newState),
 ];
