@@ -1,7 +1,26 @@
 <resources>
     <string name="app_name">Greenhouse Notifier</string>
-    <string name="notification_channel_low_temp_warning_id" translatable="false">fcm_channel_low_temp_warning</string>
-    <string name="notification_channel_low_temp_warning_name">Low temperature warning</string>
-    <string name="notification_low_temp_warning_text">Temperature dropped to %s°C</string>
+    
+    <string name="notification_channel_temperature_low_id" translatable="false">notification_channel_temperature_low_id</string>
+    <string name="notification_channel_temperature_low_name">Low temperature warning</string>
+    <string name="notification_channel_temperature_low_text">Temperature dropped to %s°C</string>
+    <string name="notification_channel_temperature_ok_id" translatable="false">notification_channel_temperature_ok_id</string>
+    <string name="notification_channel_temperature_ok_name">Temperature back to safe</string>
+    <string name="notification_channel_temperature_ok_text">Temperature back to safe (%s°C)</string>
+
+    <string name="notification_channel_battery_low_id" translatable="false">notification_channel_battery_low_id</string>
+    <string name="notification_channel_battery_low_name">Low battery warning</string>
+    <string name="notification_channel_battery_low_text">Battery voltage dropped to %sV</string>
+    <string name="notification_channel_battery_ok_id" translatable="false">notification_channel_battery_ok_id</string>
+    <string name="notification_channel_battery_ok_name">Battery level sufficient</string>
+    <string name="notification_channel_battery_ok_text">Battery level sufficient (%sV)</string>
+
+    <string name="notification_channel_liveness_low_id" translatable="false">notification_channel_liveness_low_id</string>
+    <string name="notification_channel_liveness_low_name">No data received</string>
+    <string name="notification_channel_liveness_low_text">No data received from the device from a couple of minutes</string>
+    <string name="notification_channel_liveness_ok_id" translatable="false">notification_channel_liveness_ok_id</string>
+    <string name="notification_channel_liveness_ok_name">The device is operational</string>
+    <string name="notification_channel_liveness_ok_text">Received new data, the device is operational again</string>
+    
     <string name="webui_url" translatable="false">https://szklarnia.bultrowicz.pl</string>
 </resources>
