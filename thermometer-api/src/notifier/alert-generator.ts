@@ -21,7 +21,14 @@ const isStateDifferent = (oldValue: number | undefined | null, newValue: number 
     if (!isDefined(oldValue)) {
         return true;
     }
-    return (newValue - treshold) * (oldValue - treshold) < 0
+    
+    if (newValue < oldValue && newValue < treshold && oldValue >= treshold) {
+        return true;
+    }
+    if (newValue > oldValue && newValue > treshold && oldValue <= treshold) {
+        return true;
+    }
+    return false;
 }
 
 const generateTemperatureAlerts = (oldState: State, newState: State): Alert[] =>
