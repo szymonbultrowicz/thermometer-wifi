@@ -12,7 +12,7 @@
     <string name="notification_channel_battery_ok_text">Poziom baterii wzrósł do %sV</string>
 
     <string name="notification_channel_liveness_low_name">Brak danych</string>
-    <string name="notification_channel_liveness_low_text">Nie otrzymany danych przez ostatnie kilka minut</string>
+    <string name="notification_channel_liveness_low_text">Nie otrzymano danych przez ostatnie kilka minut</string>
     <string name="notification_channel_liveness_ok_name">Urządzenie sprawne</string>
     <string name="notification_channel_liveness_ok_text">Otrzymano nowe dane, urządzenie wygląda na sprawne</string>
 </resources>

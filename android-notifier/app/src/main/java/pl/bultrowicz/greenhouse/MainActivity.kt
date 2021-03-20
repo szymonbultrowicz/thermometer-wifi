@@ -5,15 +5,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import com.judemanutd.autostarter.AutoStartPermissionHelper
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ensureAutoStart()
 
         subscribeToTopics()
         registerInFirebase()
@@ -35,6 +39,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun getWebView() =
         findViewById<WebView>(R.id.mainWebView)
+
+    private fun ensureAutoStart() {
+        val autoStartAvailable = AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(this)
+        val success = AutoStartPermissionHelper.getInstance().getAutoStartPermission(this@MainActivity)
+        var message = "Failed"
+        if (success) message = "Successful"
+
+        Toast.makeText(this@MainActivity, "Supports AutoStart: $autoStartAvailable, Action $message", Toast.LENGTH_SHORT).show()
+    }
 
     private fun subscribeToTopics() {
         FirebaseMessaging.getInstance()

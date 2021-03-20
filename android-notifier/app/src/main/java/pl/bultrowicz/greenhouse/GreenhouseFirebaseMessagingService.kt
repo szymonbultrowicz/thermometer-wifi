@@ -48,12 +48,12 @@ class GreenhouseFirebaseMessagingService : FirebaseMessagingService() {
             setOf("liveness", "low") -> sendNotification(
                 getString(R.string.notification_channel_liveness_low_id),
                 getString(R.string.notification_channel_liveness_low_name),
-                getString(R.string.notification_channel_liveness_low_text, value)
+                getString(R.string.notification_channel_liveness_low_text)
             )
             setOf("liveness", "ok") -> sendNotification(
                 getString(R.string.notification_channel_liveness_ok_id),
                 getString(R.string.notification_channel_liveness_ok_name),
-                getString(R.string.notification_channel_liveness_ok_text, value)
+                getString(R.string.notification_channel_liveness_ok_text)
             )
         }
     }
