@@ -24,7 +24,7 @@ struct WifiConfig {
 class WifiPortal {
     public:
         WifiPortal();
-        boolean configure();
+        void configure();
         // void clear();
         void tryConnect();
         

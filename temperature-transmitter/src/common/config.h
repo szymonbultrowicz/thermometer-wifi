@@ -7,7 +7,7 @@
 #define PIN_RESET 14 // D5
 #define PIN_SETUP 13  // D7
 #define PIN_DHT 5  // D1
-#define PIN_DHT_POWER 0  // D2
+#define PIN_DHT_POWER 4  // D2
 #define PIN_LED 2   // D4
 
 #define RESET_DELAY 3   // s

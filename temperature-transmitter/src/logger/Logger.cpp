@@ -1,6 +1,7 @@
 #include "Logger.h"
 
 Logger::Logger() {
+    this->id = String(random(1000, 9999));
     if (LOG_SAVE_ENABLED) {
         if (!LittleFS.begin()) {
             Serial.println("An Error has occurred while mounting LittleFS");
@@ -40,7 +41,7 @@ void Logger::logDuration(String tag, unsigned int duration) {
 }
 
 void Logger::format(char* buffer, String* line) {
-    sprintf(buffer, "%d: %s", millis(), line->c_str());
+    sprintf(buffer, "%s: %s", this->id.c_str(), line->c_str());
 }
 
 void Logger::halt() {

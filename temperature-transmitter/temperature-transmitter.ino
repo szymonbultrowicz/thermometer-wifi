@@ -32,13 +32,9 @@ void setup()
     unsigned long setupStart = millis();
 
     Serial.begin(115200);
-    Serial.println("Started");
-    // Wait for serial to initialize.
-    while (!Serial)
-    {
-    }
 
     logger = new Logger();
+    logger->logPerm("Started");
 
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, HIGH);
@@ -139,12 +135,7 @@ void loop()
 
 void configureWifi() {
     turnLedOn();
-    if (!wifiPortal.configure())
-    {
-        // Turn off ESP if the wifi failed to configure in the given time
-        logger->logPerm("WiFi configuration failure, turning off");
-        sleep(0);
-    }
+    wifiPortal.configure();
     turnLedOff();
 }
 

@@ -15,8 +15,7 @@ void ReadingSender::init() {
     timeClient.begin();
     if (!this->client->connected()) {
         if (!this->client->connect("ESP8266Thermometer", MQTT_USER, MQTT_PASSWORD)) {
-            Serial.print("MQTT connection failed! Error code = ");
-            Serial.println(this->client->state());
+            this->logger->logPerm(String("MQTT connection error: ") + this->client->state());
             return;
         }
     }
@@ -27,8 +26,10 @@ void ReadingSender::send(Reading* reading) {
 
     unsigned long sendStart = millis();
 
-    if (!this->client->publish(MQTT_TOPIC, this->serializeReading(reading).c_str())) {
-        Serial.println("Failed to send the reading");
+    if (this->client->publish(MQTT_TOPIC, this->serializeReading(reading).c_str())) {
+        this->logger->logPerm("Sent reading");
+    } else {
+        this->logger->logPerm("Failed to send the reading");
     }
     
 
@@ -40,8 +41,11 @@ void ReadingSender::sendError(ReadingError* error) {
 
     unsigned long sendStart = millis();
 
-    if (!this->client->publish(MQTT_TOPIC, this->serializeReadingError(error).c_str())) {
-        Serial.println("Failed to send the error");
+    String serializedError = this->serializeReadingError(error);
+    if (this->client->publish(MQTT_TOPIC, serializedError.c_str())) {
+        this->logger->logPerm(String("Sent error: ") + serializedError);
+    } else {
+        this->logger->logPerm("Failed to send the error");
     }
 
     this->logger->logDuration("Sending", millis() - sendStart);

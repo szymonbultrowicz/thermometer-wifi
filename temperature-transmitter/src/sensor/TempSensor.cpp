@@ -14,8 +14,8 @@ TempSensor::~TempSensor() {
 }
 
 void TempSensor::init() {
-    pinMode(pinPower, OUTPUT);
-    digitalWrite(pinPower, HIGH);
+    pinMode(this->pinPower, OUTPUT);
+    digitalWrite(this->pinPower, HIGH);
     this->sensor->begin();
 }
 

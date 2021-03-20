@@ -38,7 +38,7 @@ WifiPortal::WifiPortal() {
     this->wifiManager = new WiFiManager();
 }
 
-boolean WifiPortal::configure() {
+void WifiPortal::configure() {
     this->wifiManager->setConfigPortalTimeout(180);
 
     WiFiManagerParameter useDhcp("dhcp", "Use DHCP", 0, 1, "type=\"checkbox\" checked"); 
@@ -56,22 +56,19 @@ boolean WifiPortal::configure() {
     wifiManager->addParameter(&dns2);
     wifiManager->setCustomHeadElement(jsMin);
 
-    bool connected = this->wifiManager->startConfigPortal("thermometer", "12345678");
-    if (connected) {
-        WifiConfig* config = new WifiConfig();
-        config->useDhcp = useDhcp.getValue() == "1";
-        config->ip.fromString(staticIp.getValue());
-        config->subnet.fromString(subnet.getValue());
-        config->gateway.fromString(gateway.getValue());
-        config->dns1.fromString(dns1.getValue());
-        config->dns2.fromString(dns2.getValue());
+    this->wifiManager->startConfigPortal("thermometer", "12345678");
 
-        this->saveCredentials(config);
+    WifiConfig* config = new WifiConfig();
+    config->useDhcp = useDhcp.getValue() == "1";
+    config->ip.fromString(staticIp.getValue());
+    config->subnet.fromString(subnet.getValue());
+    config->gateway.fromString(gateway.getValue());
+    config->dns1.fromString(dns1.getValue());
+    config->dns2.fromString(dns2.getValue());
 
-        delete config;
-    }
+    this->saveCredentials(config);
 
-    return connected;
+    delete config;
 }
 
 void WifiPortal::tryConnect() {

@@ -12,6 +12,7 @@ class Logger {
         void print(String line);
         void halt();
     private:
+        String id;
         void format(char* buffer, String* line);
         char buffer[1000];
         String existingLogContent;
