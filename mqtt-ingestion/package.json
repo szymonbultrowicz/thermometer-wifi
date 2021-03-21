@@ -13,21 +13,21 @@
     "deploy": "gulp deploy"
   },
   "dependencies": {
-    "@influxdata/influxdb-client": "^1.5.0",
+    "@influxdata/influxdb-client": "^1.11.0",
     "dotenv": "^8.2.0",
-    "lodash": "^4.17.19",
-    "mqtt": "^4.1.0"
+    "lodash": "^4.17.21",
+    "mqtt": "^4.2.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.158",
+    "@types/lodash": "^4.14.168",
     "@types/mqtt": "^2.5.0",
-    "@types/node": "12.0.0",
+    "@types/node": "14.14.35",
     "gulp": "^4.0.2",
     "gulp-rsync": "^0.0.9",
     "gulp-ssh": "^0.7.0",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "nodemon": "^2.0.4",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.7"
+    "nodemon": "^2.0.7",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   }
 }
