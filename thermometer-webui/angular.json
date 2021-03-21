@@ -57,7 +57,7 @@
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js"
             ],
-            "i18nLocale": "pl",
+            "localize": false,
             "allowedCommonJsDependencies": [
               "highcharts",
               "highcharts/themes/dark-unica"
@@ -74,7 +74,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
