@@ -66,6 +66,6 @@ const generateLivenessAlerts = (oldState: State, newState: State): Alert[] => {
 
 export const generateAlerts = (oldState: State, newState: State) => [
     ...generateTemperatureAlerts(oldState, newState),
-    ...generateBatteryAlerts(oldState, newState),
-    ...generateLivenessAlerts(oldState, newState),
+    // ...generateBatteryAlerts(oldState, newState),
+    // ...generateLivenessAlerts(oldState, newState),
 ];
